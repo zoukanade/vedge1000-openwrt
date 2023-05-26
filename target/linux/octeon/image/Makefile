@@ -94,4 +94,16 @@ define Device/ubnt_unifi-usg
 endef
 TARGET_DEVICES += ubnt_unifi-usg
 
+define Device/n821
+  DEVICE_VENDOR := Viptela
+  DEVICE_MODEL := Viptela vEdge 1000
+  BOARD_NAME := imt,n821
+  DEVICE_PACKAGES += kmod-gpio-button-hotplug kmod-leds-gpio kmod-of-mdio kmod-sfp kmod-usb3 kmod-usb-dwc3 kmod-usb-storage-uas
+  KERNEL := kernel-bin | patch-cmdline | append-dtb-to-elf
+  KERNEL_DEPENDS := $$(wildcard $(DTS_DIR)/$(DEVICE_DTS).dts)
+  DEVICE_DTS := n821
+  CMDLINE := root=/dev/mmcblk0p2 rootfstype=squashfs,ext4 rootwait
+endef
+TARGET_DEVICES += n821
+
 $(eval $(call BuildImage))
