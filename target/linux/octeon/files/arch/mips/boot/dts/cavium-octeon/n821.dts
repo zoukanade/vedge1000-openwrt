@@ -1,0 +1,678 @@
+/dts-v1/;
+
+/ {
+        model = "imt,n821";
+        compatible = "imt,n821";
+        #address-cells = <0x02>;
+        #size-cells = <0x02>;
+        interrupt-parent = <0x01>;
+
+        soc@0 {
+                compatible = "simple-bus";
+                #address-cells = <0x02>;
+                #size-cells = <0x02>;
+                ranges;
+
+                interrupt-controller@1070000000000 {
+                        compatible = "cavium,octeon-3860-ciu";
+                        interrupt-controller;
+                        #interrupt-cells = <0x02>;
+                        reg = <0x10700 0x00 0x00 0x7000>;
+                        linux,phandle = <0x01>;
+                        phandle = <0x01>;
+                };
+
+                gpio-controller@1070000000800 {
+                        #gpio-cells = <0x02>;
+                        compatible = "cavium,octeon-3860-gpio";
+                        reg = <0x10700 0x800 0x00 0x100>;
+                        gpio-controller;
+                        interrupt-controller;
+                        #interrupt-cells = <0x02>;
+                        interrupts = <0x00 0x10>;
+                        linux,phandle = <0x1b>;
+                        phandle = <0x1b>;
+                };
+
+                mdio@1180000001800 {
+                        compatible = "cavium,octeon-3860-mdio";
+                        #address-cells = <0x01>;
+                        #size-cells = <0x00>;
+                        reg = <0x11800 0x1800 0x00 0x40>;
+
+                        ethernet-phy@0 {
+                                compatible = "vitesse,vsc8211";
+                                reg = <0x00>;
+                                linux,phandle = <0x02>;
+                                phandle = <0x02>;
+                        };
+                };
+
+                mdio@1180000001900 {
+                        compatible = "cavium,octeon-3860-mdio";
+                        #address-cells = <0x01>;
+                        #size-cells = <0x00>;
+                        reg = <0x11800 0x1900 0x00 0x40>;
+                };
+
+                ethernet@1070000100000 {
+                        compatible = "cavium,octeon-5750-mix";
+                        reg = <0x10700 0x100000 0x00 0x100 0x11800 0xe0000000 0x00 0x300 0x11800 0xe0000400 0x00 0x400 0x11800 0xe0002000 0x00 0x08>;
+                        cell-index = <0x00>;
+                        interrupts = <0x00 0x3e 0x01 0x2e>;
+                        local-mac-address = [00 00 00 00 00 00];
+                        phy-handle = <0x02>;
+                };
+
+                pip@11800a0000000 {
+                        compatible = "cavium,octeon-3860-pip";
+                        #address-cells = <0x01>;
+                        #size-cells = <0x00>;
+                        reg = <0x11800 0xa0000000 0x00 0x2000>;
+
+                        interface@0 {
+                                cavium,qlm-trim = "0,sgmii";
+                                compatible = "cavium,octeon-3860-pip-interface";
+                                #address-cells = <0x01>;
+                                #size-cells = <0x00>;
+                                reg = <0x00>;
+
+                                ethernet@0 {
+                                        compatible = "cavium,octeon-3860-pip-port";
+                                        reg = <0x00>;
+                                        local-mac-address = [00 00 00 00 00 00];
+                                        sfp-handle = <0x03>;
+                                        mdio-handle = <0x04>;
+                                        sfp-diags-handle = <0x05>;
+                                        ifname = "ge0_2";
+                                };
+
+                                ethernet@1 {
+                                        compatible = "cavium,octeon-3860-pip-port";
+                                        reg = <0x01>;
+                                        local-mac-address = [00 00 00 00 00 00];
+                                        sfp-handle = <0x06>;
+                                        mdio-handle = <0x07>;
+                                        sfp-diags-handle = <0x08>;
+                                        ifname = "ge0_3";
+                                };
+
+                                ethernet@2 {
+                                        compatible = "cavium,octeon-3860-pip-port";
+                                        reg = <0x02>;
+                                        local-mac-address = [00 00 00 00 00 00];
+                                        sfp-handle = <0x09>;
+                                        mdio-handle = <0x0a>;
+                                        sfp-diags-handle = <0x0b>;
+                                        ifname = "ge0_0";
+                                };
+
+                                ethernet@3 {
+                                        compatible = "cavium,octeon-3860-pip-port";
+                                        reg = <0x03>;
+                                        local-mac-address = [00 00 00 00 00 00];
+                                        sfp-handle = <0x0c>;
+                                        mdio-handle = <0x0d>;
+                                        sfp-diags-handle = <0x0e>;
+                                        ifname = "ge0_1";
+                                };
+                        };
+
+                        interface@1 {
+                                cavium,qlm-trim = "1,sgmii";
+                                compatible = "cavium,octeon-3860-pip-interface";
+                                #address-cells = <0x01>;
+                                #size-cells = <0x00>;
+                                reg = <0x01>;
+
+                                ethernet@0 {
+                                        compatible = "cavium,octeon-3860-pip-port";
+                                        reg = <0x00>;
+                                        local-mac-address = [00 00 00 00 00 00];
+                                        sfp-handle = <0x0f>;
+                                        mdio-handle = <0x10>;
+                                        sfp-diags-handle = <0x11>;
+                                        ifname = "ge0_6";
+                                };
+
+                                ethernet@1 {
+                                        compatible = "cavium,octeon-3860-pip-port";
+                                        reg = <0x01>;
+                                        local-mac-address = [00 00 00 00 00 00];
+                                        sfp-handle = <0x12>;
+                                        mdio-handle = <0x13>;
+                                        sfp-diags-handle = <0x14>;
+                                        ifname = "ge0_7";
+                                };
+
+                                ethernet@2 {
+                                        compatible = "cavium,octeon-3860-pip-port";
+                                        reg = <0x02>;
+                                        local-mac-address = [00 00 00 00 00 00];
+                                        sfp-handle = <0x15>;
+                                        mdio-handle = <0x16>;
+                                        sfp-diags-handle = <0x17>;
+                                        ifname = "ge0_4";
+                                };
+
+                                ethernet@3 {
+                                        compatible = "cavium,octeon-3860-pip-port";
+                                        reg = <0x03>;
+                                        local-mac-address = [00 00 00 00 00 00];
+                                        sfp-handle = <0x18>;
+                                        mdio-handle = <0x19>;
+                                        sfp-diags-handle = <0x1a>;
+                                        ifname = "ge0_5";
+                                };
+                        };
+                };
+
+                i2c@1180000001000 {
+                        #address-cells = <0x01>;
+                        #size-cells = <0x00>;
+                        compatible = "cavium,octeon-3860-twsi";
+                        reg = <0x11800 0x1000 0x00 0x200>;
+                        interrupts = <0x00 0x2d>;
+                        clock-frequency = <0x61a80>;
+
+                        jc42@18 {
+                                compatible = "jc42";
+                                reg = <0x18>;
+                        };
+                };
+
+                i2c@1180000001200 {
+                        #address-cells = <0x01>;
+                        #size-cells = <0x00>;
+                        compatible = "cavium,octeon-3860-twsi";
+                        reg = <0x11800 0x1200 0x00 0x200>;
+                        interrupts = <0x00 0x3b>;
+                        clock-frequency = <0x61a80>;
+
+                        tmp@4c {
+                                compatible = "maxim,max6699";
+                                reg = <0x4c>;
+                        };
+
+                        rtc@6f {
+                                compatible = "microchip,mcp7941x";
+                                reg = <0x6f>;
+                        };
+
+                        tlv-eeprom@54 {
+                                compatible = "atmel,24c512";
+                                reg = <0x54>;
+                                pagesize = <0x80>;
+                        };
+                };
+
+                serial@1180000000800 {
+                        compatible = "cavium,octeon-3860-uart\0ns16550";
+                        reg = <0x11800 0x800 0x00 0x400>;
+                        clock-frequency = <0x00>;
+                        current-speed = <0x1c200>;
+                        reg-shift = <0x03>;
+                        interrupts = <0x00 0x22>;
+                };
+
+                serial@1180000000c00 {
+                        compatible = "cavium,octeon-3860-uart\0ns16550";
+                        reg = <0x11800 0xc00 0x00 0x400>;
+                        clock-frequency = <0x00>;
+                        current-speed = <0x1c200>;
+                        reg-shift = <0x03>;
+                        interrupts = <0x00 0x23>;
+                };
+
+                mmc@1180000002000 {
+                        compatible = "cavium,octeon-6130-mmc";
+                        reg = <0x11800 0x2000 0x00 0x100 0x11800 0x168 0x00 0x20>;
+                        #address-cells = <0x01>;
+                        #size-cells = <0x00>;
+                        interrupts = <0x01 0x13 0x00 0x3f>;
+
+                        mmc-slot@0 {
+                                compatible = "cavium,octeon-6130-mmc-slot";
+                                reg = <0x00>;
+                                voltage-ranges = <0xce4 0xce4>;
+                                spi-max-frequency = <0x3197500>;
+                                wp-gpios = <0x1b 0x02 0x00>;
+                                cd-gpios = <0x1b 0x03 0x01>;
+                                cavium,bus-max-width = <0x04>;
+                        };
+                };
+
+                bootbus@1180000000000 {
+                        compatible = "cavium,octeon-3860-bootbus";
+                        reg = <0x11800 0x00 0x00 0x200>;
+                        #address-cells = <0x02>;
+                        #size-cells = <0x01>;
+                        ranges = <0x00 0x00 0x00 0x1ec00000 0x1400000 0x01 0x00 0x10000 0x20000000 0x00 0x02 0x00 0x10000 0x30000000 0x00 0x03 0x00 0x10000 0x40000000 0x00 0x04 0x00 0x10000 0x50000000 0x00 0x05 0x00 0x10000 0x60000000 0x00 0x06 0x00 0x00 0x1e000000 0x10000 0x07 0x00 0x10000 0x80000000 0x00>;
+
+                        cavium,cs-config@0 {
+                                compatible = "cavium,octeon-3860-bootbus-config";
+                                cavium,cs-index = <0x00>;
+                                cavium,t-adr = <0x0a>;
+                                cavium,t-ce = <0x32>;
+                                cavium,t-oe = <0x32>;
+                                cavium,t-we = <0x23>;
+                                cavium,t-rd-hld = <0x19>;
+                                cavium,t-wr-hld = <0x23>;
+                                cavium,t-pause = <0x00>;
+                                cavium,t-wait = <0x12c>;
+                                cavium,t-page = <0x19>;
+                                cavium,t-rd-dly = <0x00>;
+                                cavium,t-ale = <0x03>;
+                                cavium,pages = <0x00>;
+                                cavium,bus-width = <0x10>;
+                        };
+
+                        cavium,cs-config@6 {
+                                compatible = "cavium,octeon-3860-bootbus-config";
+                                cavium,cs-index = <0x06>;
+                                cavium,t-adr = <0x0a>;
+                                cavium,t-ce = <0x0a>;
+                                cavium,t-oe = <0xa0>;
+                                cavium,t-we = <0x64>;
+                                cavium,t-rd-hld = <0x00>;
+                                cavium,t-wr-hld = <0x00>;
+                                cavium,t-pause = <0x32>;
+                                cavium,t-wait = <0x12c>;
+                                cavium,t-page = <0x12c>;
+                                cavium,t-rd-dly = <0x0a>;
+                                cavium,t-ale = <0x3f>;
+                                cavium,pages = <0x00>;
+                                cavium,bus-width = <0x08>;
+                        };
+
+                        nor@0,0 {
+                                compatible = "cfi-flash";
+                                reg = <0x00 0x00 0x1000000>;
+                                #address-cells = <0x01>;
+                                #size-cells = <0x01>;
+
+                                partition@0 {
+                                        label = "bootloader";
+                                        reg = <0x00 0x200000>;
+                                        read-only;
+                                };
+
+                                partition@0fe0000 {
+                                        label = "environment";
+                                        reg = <0xfe0000 0x20000>;
+                                        read-only;
+                                };
+                        };
+
+                        cpld@6,0 {
+                                compatible = "imt,cpld-821";
+                                reg = <0x06 0x00 0x50>;
+                                interrupt-controller;
+                                #interrupt-cells = <0x02>;
+                                interrupt-parent = <0x1b>;
+                                interrupts = <0x01 0x08>;
+                                #address-cells = <0x01>;
+                                #size-cells = <0x01>;
+                                linux,phandle = <0x1d>;
+                                phandle = <0x1d>;
+
+                                i2cbb@1b {
+                                        compatible = "imt,i2c-bitbang";
+                                        reg = <0x1b 0x01>;
+                                        #address-cells = <0x01>;
+                                        #size-cells = <0x00>;
+
+                                        bid@50 {
+                                                compatible = "renesas,board-id";
+                                                reg = <0x50>;
+                                        };
+                                };
+
+                                i2cmux@1f {
+                                        compatible = "imt,i2c-mux";
+                                        reg = <0x1f 0x01>;
+                                        #address-cells = <0x01>;
+                                        #size-cells = <0x00>;
+                                        i2c-parent = <0x1c>;
+                                        bus = <0x00>;
+
+                                        i2c@0 {
+                                                reg = <0x00>;
+                                                #address-cells = <0x01>;
+                                                #size-cells = <0x00>;
+                                                i2c-name = "ge0_6";
+
+                                                eeprom@50 {
+                                                        compatible = "atmel,24c02";
+                                                        reg = <0x50>;
+                                                        page-size = <0x01>;
+                                                        read-only = <0x01>;
+                                                        linux,phandle = <0x0f>;
+                                                        phandle = <0x0f>;
+                                                };
+
+                                                mdio@56 {
+                                                        compatible = "virtual,mdio-i2c";
+                                                        reg = <0x56>;
+                                                        linux,phandle = <0x10>;
+                                                        phandle = <0x10>;
+                                                };
+
+                                                sfp_diag@51 {
+                                                        compatible = "atmel,sfp_diag";
+                                                        reg = <0x51>;
+                                                        page-size = <0x01>;
+                                                        linux,phandle = <0x11>;
+                                                        phandle = <0x11>;
+                                                };
+                                        };
+
+                                        i2c@1 {
+                                                reg = <0x01>;
+                                                #address-cells = <0x01>;
+                                                #size-cells = <0x00>;
+                                                i2c-name = "ge0_7";
+
+                                                eeprom@50 {
+                                                        compatible = "atmel,24c02";
+                                                        reg = <0x50>;
+                                                        page-size = <0x01>;
+                                                        read-only = <0x01>;
+                                                        linux,phandle = <0x12>;
+                                                        phandle = <0x12>;
+                                                };
+
+                                                mdio@56 {
+                                                        compatible = "virtual,mdio-i2c";
+                                                        reg = <0x56>;
+                                                        linux,phandle = <0x13>;
+                                                        phandle = <0x13>;
+                                                };
+
+                                                sfp_diag@51 {
+                                                        compatible = "atmel,sfp_diag";
+                                                        reg = <0x51>;
+                                                        page-size = <0x01>;
+                                                        linux,phandle = <0x14>;
+                                                        phandle = <0x14>;
+                                                };
+                                        };
+
+                                        i2c@2 {
+                                                reg = <0x02>;
+                                                #address-cells = <0x01>;
+                                                #size-cells = <0x00>;
+                                                i2c-name = "ge0_4";
+
+                                                eeprom@50 {
+                                                        compatible = "atmel,24c02";
+                                                        reg = <0x50>;
+                                                        page-size = <0x01>;
+                                                        read-only = <0x01>;
+                                                        linux,phandle = <0x15>;
+                                                        phandle = <0x15>;
+                                                };
+
+                                                mdio@56 {
+                                                        compatible = "virtual,mdio-i2c";
+                                                        reg = <0x56>;
+                                                        linux,phandle = <0x16>;
+                                                        phandle = <0x16>;
+                                                };
+
+                                                sfp_diag@51 {
+                                                        compatible = "atmel,sfp_diag";
+                                                        reg = <0x51>;
+                                                        page-size = <0x01>;
+                                                        linux,phandle = <0x17>;
+                                                        phandle = <0x17>;
+                                                };
+                                        };
+
+                                        i2c@3 {
+                                                reg = <0x03>;
+                                                #address-cells = <0x01>;
+                                                #size-cells = <0x00>;
+                                                i2c-name = "ge0_5";
+
+                                                eeprom@50 {
+                                                        compatible = "atmel,24c02";
+                                                        reg = <0x50>;
+                                                        page-size = <0x01>;
+                                                        read-only = <0x01>;
+                                                        linux,phandle = <0x18>;
+                                                        phandle = <0x18>;
+                                                };
+
+                                                mdio@56 {
+                                                        compatible = "virtual,mdio-i2c";
+                                                        reg = <0x56>;
+                                                        linux,phandle = <0x19>;
+                                                        phandle = <0x19>;
+                                                };
+
+                                                sfp_diag@51 {
+                                                        compatible = "atmel,sfp_diag";
+                                                        reg = <0x51>;
+                                                        page-size = <0x01>;
+                                                        linux,phandle = <0x1a>;
+                                                        phandle = <0x1a>;
+                                                };
+                                        };
+
+                                        i2c@4 {
+                                                reg = <0x04>;
+                                                #address-cells = <0x01>;
+                                                #size-cells = <0x00>;
+                                                i2c-name = "ge0_2";
+
+                                                eeprom@50 {
+                                                        compatible = "atmel,24c02";
+                                                        reg = <0x50>;
+                                                        page-size = <0x01>;
+                                                        read-only = <0x01>;
+                                                        linux,phandle = <0x03>;
+                                                        phandle = <0x03>;
+                                                };
+
+                                                mdio@56 {
+                                                        compatible = "virtual,mdio-i2c";
+                                                        reg = <0x56>;
+                                                        linux,phandle = <0x04>;
+                                                        phandle = <0x04>;
+                                                };
+
+                                                sfp_diag@51 {
+                                                        compatible = "atmel,sfp_diag";
+                                                        reg = <0x51>;
+                                                        page-size = <0x01>;
+                                                        linux,phandle = <0x05>;
+                                                        phandle = <0x05>;
+                                                };
+                                        };
+
+                                        i2c@5 {
+                                                reg = <0x05>;
+                                                #address-cells = <0x01>;
+                                                #size-cells = <0x00>;
+                                                i2c-name = "ge0_3";
+
+                                                eeprom@50 {
+                                                        compatible = "atmel,24c02";
+                                                        reg = <0x50>;
+                                                        page-size = <0x01>;
+                                                        read-only = <0x01>;
+                                                        linux,phandle = <0x06>;
+                                                        phandle = <0x06>;
+                                                };
+
+                                                mdio@56 {
+                                                        compatible = "virtual,mdio-i2c";
+                                                        reg = <0x56>;
+                                                        linux,phandle = <0x07>;
+                                                        phandle = <0x07>;
+                                                };
+
+                                                sfp_diag@51 {
+                                                        compatible = "atmel,sfp_diag";
+                                                        reg = <0x51>;
+                                                        page-size = <0x01>;
+                                                        linux,phandle = <0x08>;
+                                                        phandle = <0x08>;
+                                                };
+                                        };
+
+                                        i2c@6 {
+                                                reg = <0x06>;
+                                                #address-cells = <0x01>;
+                                                #size-cells = <0x00>;
+                                                i2c-name = "ge0_0";
+
+                                                eeprom@50 {
+                                                        compatible = "atmel,24c02";
+                                                        reg = <0x50>;
+                                                        page-size = <0x01>;
+                                                        read-only = <0x01>;
+                                                        linux,phandle = <0x09>;
+                                                        phandle = <0x09>;
+                                                };
+
+                                                mdio@56 {
+                                                        compatible = "virtual,mdio-i2c";
+                                                        reg = <0x56>;
+                                                        linux,phandle = <0x0a>;
+                                                        phandle = <0x0a>;
+                                                };
+
+                                                sfp_diag@51 {
+                                                        compatible = "atmel,sfp_diag";
+                                                        reg = <0x51>;
+                                                        page-size = <0x01>;
+                                                        linux,phandle = <0x0b>;
+                                                        phandle = <0x0b>;
+                                                };
+                                        };
+
+                                        i2c@7 {
+                                                reg = <0x07>;
+                                                #address-cells = <0x01>;
+                                                #size-cells = <0x00>;
+                                                i2c-name = "ge0_1";
+
+                                                eeprom@50 {
+                                                        compatible = "atmel,24c02";
+                                                        reg = <0x50>;
+                                                        page-size = <0x01>;
+                                                        read-only = <0x01>;
+                                                        linux,phandle = <0x0c>;
+                                                        phandle = <0x0c>;
+                                                };
+
+                                                mdio@56 {
+                                                        compatible = "virtual,mdio-i2c";
+                                                        reg = <0x56>;
+                                                        linux,phandle = <0x0d>;
+                                                        phandle = <0x0d>;
+                                                };
+
+                                                sfp_diag@51 {
+                                                        compatible = "atmel,sfp_diag";
+                                                        reg = <0x51>;
+                                                        page-size = <0x01>;
+                                                        linux,phandle = <0x0e>;
+                                                        phandle = <0x0e>;
+                                                };
+                                        };
+
+                                        i2c@10 {
+                                                reg = <0x10>;
+                                                #address-cells = <0x01>;
+                                                #size-cells = <0x00>;
+                                                i2c-name = "temp";
+
+                                                temp@4c {
+                                                        compatible = "max6657";
+                                                        reg = <0x4c>;
+                                                };
+                                        };
+                                };
+
+                                mdio@30 {
+                                        compatible = "imt,mdio";
+                                        reg = <0x30 0x08>;
+                                };
+
+                                i2c@38 {
+                                        compatible = "imt,i2c";
+                                        reg = <0x38 0x08>;
+                                        interrupt-parent = <0x1d>;
+                                        interrupts = <0x03 0x04>;
+                                        clock-frequency = <0x186a0>;
+                                        linux,phandle = <0x1c>;
+                                        phandle = <0x1c>;
+                                };
+
+                                ufm@40 {
+                                        compatible = "imt,ufm";
+                                        reg = <0x40 0x08>;
+                                };
+
+                                avr@48 {
+                                        compatible = "imt,avr";
+                                        reg = <0x48 0x38>;
+                                };
+                        };
+                };
+
+                dma-engine@1180000000100 {
+                        compatible = "cavium,octeon-5750-bootbus-dma";
+                        reg = <0x11800 0x100 0x00 0x08>;
+                        interrupts = <0x00 0x3f>;
+                };
+
+                dma-engine@1180000000108 {
+                        compatible = "cavium,octeon-5750-bootbus-dma";
+                        reg = <0x11800 0x108 0x00 0x08>;
+                        interrupts = <0x00 0x3f>;
+                };
+
+                uctl@118006f000000 {
+                        compatible = "cavium,octeon-6335-uctl";
+                        reg = <0x11800 0x6f000000 0x00 0x100>;
+                        ranges;
+                        #address-cells = <0x02>;
+                        #size-cells = <0x02>;
+                        refclk-frequency = <0xb71b00>;
+                        refclk-type = "crystal";
+
+                        ehci@16f0000000000 {
+                                compatible = "cavium,octeon-6335-ehci\0usb-ehci";
+                                reg = <0x16f00 0x00 0x00 0x100>;
+                                interrupts = <0x00 0x38>;
+                                big-endian-regs;
+                        };
+
+                        ohci@16f0000000400 {
+                                compatible = "cavium,octeon-6335-ohci\0usb-ohci";
+                                reg = <0x16f00 0x400 0x00 0x100>;
+                                interrupts = <0x00 0x38>;
+                                big-endian-regs;
+                        };
+                };
+        };
+
+        aliases {
+                mix0 = "/soc@0/ethernet@1070000100000";
+                pip = "/soc@0/pip@11800a0000000";
+                smi0 = "/soc@0/mdio@1180000001800";
+                smi1 = "/soc@0/mdio@1180000001900";
+                smi2 = "/soc@0/bootbus@1180000000000/cpld@6,0/mdio@30";
+                twsi0 = "/soc@0/i2c@1180000001000";
+                twsi1 = "/soc@0/i2c@1180000001200";
+                uart0 = "/soc@0/serial@1180000000800";
+                flash0 = "/soc@0/bootbus@1180000000000/nor@0,0";
+                emmc = "/soc@0/mmc@1180000002000";
+                cpld = "/soc@0/bootbus@1180000000000/cpld@6,0";
+        };
+};
+
