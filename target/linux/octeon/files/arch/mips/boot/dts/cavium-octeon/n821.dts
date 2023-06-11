@@ -3,177 +3,183 @@
 / {
         model = "imt,n821";
         compatible = "imt,n821";
-        #address-cells = <0x02>;
-        #size-cells = <0x02>;
-        interrupt-parent = <0x01>;
+        #address-cells = <2>;
+        #size-cells = <2>;
+        interrupt-parent = <&ciu>;
 
-        soc@0 {
+	// TODO: It would be nice to be able to reserve the PCIe sections here
+	// to avoid having to do that in u-boot, but I haven't been able to
+	// make the kernel care about "reserved-memory" and "memory" segments.
+
+        soc {
                 compatible = "simple-bus";
-                #address-cells = <0x02>;
-                #size-cells = <0x02>;
-                ranges;
+                #address-cells = <2>;
+                #size-cells = <2>;
+		ranges; /* Direct mapping */
 
-                interrupt-controller@1070000000000 {
+                ciu: interrupt-controller@1070000000000 {
                         compatible = "cavium,octeon-3860-ciu";
                         interrupt-controller;
-                        #interrupt-cells = <0x02>;
+                        #interrupt-cells = <2>;
                         reg = <0x10700 0x00 0x00 0x7000>;
-                        linux,phandle = <0x01>;
-                        phandle = <0x01>;
                 };
 
-                gpio-controller@1070000000800 {
-                        #gpio-cells = <0x02>;
+                gpio: gpio-controller@1070000000800 {
+                        #gpio-cells = <2>;
                         compatible = "cavium,octeon-3860-gpio";
                         reg = <0x10700 0x800 0x00 0x100>;
                         gpio-controller;
                         interrupt-controller;
-                        #interrupt-cells = <0x02>;
+                        #interrupt-cells = <2>;
                         interrupts = <0x00 0x10>;
                         linux,phandle = <0x1b>;
                         phandle = <0x1b>;
                 };
 
-                mdio@1180000001800 {
+                smi0: mdio@1180000001800 {
                         compatible = "cavium,octeon-3860-mdio";
-                        #address-cells = <0x01>;
-                        #size-cells = <0x00>;
+                        #address-cells = <1>;
+                        #size-cells = <0>;
                         reg = <0x11800 0x1800 0x00 0x40>;
 
-                        ethernet-phy@0 {
-                                compatible = "vitesse,vsc8211";
+                        mgmtphy: ethernet-phy@0 {
+				// we must not specify this or the matching will not work and the PHY initialization will fail
+                                //compatible = "vitesse,vsc8211";
                                 reg = <0x00>;
-                                linux,phandle = <0x02>;
-                                phandle = <0x02>;
                         };
                 };
 
-                mdio@1180000001900 {
+		/* Unused?
+                smi1: mdio@1180000001900 {
                         compatible = "cavium,octeon-3860-mdio";
-                        #address-cells = <0x01>;
-                        #size-cells = <0x00>;
+                        #address-cells = <1>;
+                        #size-cells = <0>;
                         reg = <0x11800 0x1900 0x00 0x40>;
                 };
+		*/
 
-                ethernet@1070000100000 {
+                mgmt0: ethernet@1070000100000 {
                         compatible = "cavium,octeon-5750-mix";
-                        reg = <0x10700 0x100000 0x00 0x100 0x11800 0xe0000000 0x00 0x300 0x11800 0xe0000400 0x00 0x400 0x11800 0xe0002000 0x00 0x08>;
+                        reg = <0x10700 0x100000 0x00 0x100>,
+			      <0x11800 0xe0000000 0x00 0x300>,
+			      <0x11800 0xe0000400 0x00 0x400>,
+			      <0x11800 0xe0002000 0x00 0x08>;
                         cell-index = <0x00>;
                         interrupts = <0x00 0x3e 0x01 0x2e>;
-                        local-mac-address = [00 00 00 00 00 00];
-                        phy-handle = <0x02>;
+                        local-mac-address = [80 b7 09 0a 8b b0];
+                        phy-handle = <&mgmtphy>;
                 };
 
-                pip@11800a0000000 {
+                pip: pip@11800a0000000 {
                         compatible = "cavium,octeon-3860-pip";
-                        #address-cells = <0x01>;
-                        #size-cells = <0x00>;
+                        #address-cells = <1>;
+                        #size-cells = <0>;
                         reg = <0x11800 0xa0000000 0x00 0x2000>;
 
                         interface@0 {
                                 cavium,qlm-trim = "0,sgmii";
                                 compatible = "cavium,octeon-3860-pip-interface";
-                                #address-cells = <0x01>;
-                                #size-cells = <0x00>;
+                                #address-cells = <1>;
+                                #size-cells = <0>;
                                 reg = <0x00>;
 
                                 ethernet@0 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x00>;
                                         local-mac-address = [00 00 00 00 00 00];
-                                        sfp-handle = <0x03>;
-                                        mdio-handle = <0x04>;
-                                        sfp-diags-handle = <0x05>;
-                                        ifname = "ge0_2";
+                                        //sfp-handle = <0x03>;
+                                        //mdio-handle = <0x04>;
+                                        //sfp-diags-handle = <0x05>;
+                                        //ifname = "ge0_2";
                                 };
 
                                 ethernet@1 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x01>;
                                         local-mac-address = [00 00 00 00 00 00];
-                                        sfp-handle = <0x06>;
-                                        mdio-handle = <0x07>;
-                                        sfp-diags-handle = <0x08>;
-                                        ifname = "ge0_3";
+                                        //sfp-handle = <0x06>;
+                                        //mdio-handle = <0x07>;
+                                        //sfp-diags-handle = <0x08>;
+                                        //ifname = "ge0_3";
                                 };
 
                                 ethernet@2 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x02>;
                                         local-mac-address = [00 00 00 00 00 00];
-                                        sfp-handle = <0x09>;
-                                        mdio-handle = <0x0a>;
-                                        sfp-diags-handle = <0x0b>;
-                                        ifname = "ge0_0";
+                                        //sfp-handle = <0x09>;
+                                        //mdio-handle = <0x0a>;
+                                        //sfp-diags-handle = <0x0b>;
+                                        //ifname = "ge0_0";
                                 };
 
                                 ethernet@3 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x03>;
                                         local-mac-address = [00 00 00 00 00 00];
-                                        sfp-handle = <0x0c>;
-                                        mdio-handle = <0x0d>;
-                                        sfp-diags-handle = <0x0e>;
-                                        ifname = "ge0_1";
+                                        //sfp-handle = <0x0c>;
+                                        //mdio-handle = <0x0d>;
+                                        //sfp-diags-handle = <0x0e>;
+                                        //ifname = "ge0_1";
                                 };
                         };
 
                         interface@1 {
                                 cavium,qlm-trim = "1,sgmii";
                                 compatible = "cavium,octeon-3860-pip-interface";
-                                #address-cells = <0x01>;
-                                #size-cells = <0x00>;
+                                #address-cells = <1>;
+                                #size-cells = <0>;
                                 reg = <0x01>;
 
                                 ethernet@0 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x00>;
                                         local-mac-address = [00 00 00 00 00 00];
-                                        sfp-handle = <0x0f>;
-                                        mdio-handle = <0x10>;
-                                        sfp-diags-handle = <0x11>;
-                                        ifname = "ge0_6";
+                                        //sfp-handle = <0x0f>;
+                                        //mdio-handle = <0x10>;
+                                        //sfp-diags-handle = <0x11>;
+                                        //ifname = "ge0_6";
                                 };
 
                                 ethernet@1 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x01>;
                                         local-mac-address = [00 00 00 00 00 00];
-                                        sfp-handle = <0x12>;
-                                        mdio-handle = <0x13>;
-                                        sfp-diags-handle = <0x14>;
-                                        ifname = "ge0_7";
+                                        //sfp-handle = <0x12>;
+                                        //mdio-handle = <0x13>;
+                                        //sfp-diags-handle = <0x14>;
+                                        //ifname = "ge0_7";
                                 };
 
                                 ethernet@2 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x02>;
                                         local-mac-address = [00 00 00 00 00 00];
-                                        sfp-handle = <0x15>;
-                                        mdio-handle = <0x16>;
-                                        sfp-diags-handle = <0x17>;
-                                        ifname = "ge0_4";
+                                        //sfp-handle = <0x15>;
+                                        //mdio-handle = <0x16>;
+                                        //sfp-diags-handle = <0x17>;
+                                        //ifname = "ge0_4";
                                 };
 
                                 ethernet@3 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x03>;
                                         local-mac-address = [00 00 00 00 00 00];
-                                        sfp-handle = <0x18>;
-                                        mdio-handle = <0x19>;
-                                        sfp-diags-handle = <0x1a>;
-                                        ifname = "ge0_5";
+                                        //sfp-handle = <0x18>;
+                                        //mdio-handle = <0x19>;
+                                        //sfp-diags-handle = <0x1a>;
+                                        //ifname = "ge0_5";
                                 };
                         };
                 };
 
-                i2c@1180000001000 {
-                        #address-cells = <0x01>;
-                        #size-cells = <0x00>;
+                twsi0: i2c@1180000001000 {
+                        #address-cells = <1>;
+                        #size-cells = <0>;
                         compatible = "cavium,octeon-3860-twsi";
                         reg = <0x11800 0x1000 0x00 0x200>;
                         interrupts = <0x00 0x2d>;
-                        clock-frequency = <0x61a80>;
+                        clock-frequency = <400000>;
 
                         jc42@18 {
                                 compatible = "jc42";
@@ -181,13 +187,13 @@
                         };
                 };
 
-                i2c@1180000001200 {
-                        #address-cells = <0x01>;
-                        #size-cells = <0x00>;
+                twisi2: i2c@1180000001200 {
+                        #address-cells = <1>;
+                        #size-cells = <0>;
                         compatible = "cavium,octeon-3860-twsi";
                         reg = <0x11800 0x1200 0x00 0x200>;
                         interrupts = <0x00 0x3b>;
-                        clock-frequency = <0x61a80>;
+                        clock-frequency = <400000>;
 
                         tmp@4c {
                                 compatible = "maxim,max6699";
@@ -206,48 +212,55 @@
                         };
                 };
 
-                serial@1180000000800 {
-                        compatible = "cavium,octeon-3860-uart\0ns16550";
+                uart0: serial@1180000000800 {
+                        compatible = "cavium,octeon-3860-uart", "ns16550";
                         reg = <0x11800 0x800 0x00 0x400>;
-                        clock-frequency = <0x00>;
-                        current-speed = <0x1c200>;
                         reg-shift = <0x03>;
                         interrupts = <0x00 0x22>;
+                        clock-frequency = <600000000>;
+                        current-speed = <115200>;
                 };
 
-                serial@1180000000c00 {
-                        compatible = "cavium,octeon-3860-uart\0ns16550";
+                uart1: serial@1180000000c00 {
+                        compatible = "cavium,octeon-3860-uart", "ns16550";
                         reg = <0x11800 0xc00 0x00 0x400>;
-                        clock-frequency = <0x00>;
-                        current-speed = <0x1c200>;
                         reg-shift = <0x03>;
                         interrupts = <0x00 0x23>;
+                        clock-frequency = <600000000>;
+                        current-speed = <115200>;
                 };
 
-                mmc@1180000002000 {
+                mmc0: mmc@1180000002000 {
                         compatible = "cavium,octeon-6130-mmc";
                         reg = <0x11800 0x2000 0x00 0x100 0x11800 0x168 0x00 0x20>;
-                        #address-cells = <0x01>;
-                        #size-cells = <0x00>;
+                        #address-cells = <1>;
+                        #size-cells = <0>;
                         interrupts = <0x01 0x13 0x00 0x3f>;
 
                         mmc-slot@0 {
                                 compatible = "cavium,octeon-6130-mmc-slot";
                                 reg = <0x00>;
                                 voltage-ranges = <0xce4 0xce4>;
-                                spi-max-frequency = <0x3197500>;
-                                wp-gpios = <0x1b 0x02 0x00>;
-                                cd-gpios = <0x1b 0x03 0x01>;
+                                max-frequency = <0x3197500>;
+                                wp-gpios = <&gpio 0x02 0x00>;
+                                cd-gpios = <&gpio 0x03 0x01>;
                                 cavium,bus-max-width = <0x04>;
                         };
                 };
 
-                bootbus@1180000000000 {
+                bootbus: bootbus@1180000000000 {
                         compatible = "cavium,octeon-3860-bootbus";
                         reg = <0x11800 0x00 0x00 0x200>;
-                        #address-cells = <0x02>;
-                        #size-cells = <0x01>;
-                        ranges = <0x00 0x00 0x00 0x1ec00000 0x1400000 0x01 0x00 0x10000 0x20000000 0x00 0x02 0x00 0x10000 0x30000000 0x00 0x03 0x00 0x10000 0x40000000 0x00 0x04 0x00 0x10000 0x50000000 0x00 0x05 0x00 0x10000 0x60000000 0x00 0x06 0x00 0x00 0x1e000000 0x10000 0x07 0x00 0x10000 0x80000000 0x00>;
+                        #address-cells = <2>;
+                        #size-cells = <1>;
+                        ranges = <0 0 0x00 0x1ec00000 0x1400000>,
+                                 <1 0 0x10000 0x20000000 0x00>,
+                                 <2 0 0x10000 0x30000000 0x00>,
+                                 <3 0 0x10000 0x40000000 0x00>,
+                                 <4 0 0x10000 0x50000000 0x00>,
+                                 <5 0 0x10000 0x60000000 0x00>,
+                                 <6 0 0x00 0x1e000000 0x10000>,
+                                 <7 0 0x10000 0x80000000 0x00>;
 
                         cavium,cs-config@0 {
                                 compatible = "cavium,octeon-3860-bootbus-config";
@@ -285,11 +298,15 @@
                                 cavium,bus-width = <0x08>;
                         };
 
-                        nor@0,0 {
+                        flash0: nor@0,0 {
                                 compatible = "cfi-flash";
                                 reg = <0x00 0x00 0x1000000>;
-                                #address-cells = <0x01>;
-                                #size-cells = <0x01>;
+				/* not sure about these values */
+				bank-width = <2>;
+                		device-width = <1>;
+
+                                #address-cells = <1>;
+                                #size-cells = <1>;
 
                                 partition@0 {
                                         label = "bootloader";
@@ -297,49 +314,51 @@
                                         read-only;
                                 };
 
-                                partition@0fe0000 {
+                                partition@fe0000 {
                                         label = "environment";
                                         reg = <0xfe0000 0x20000>;
                                         read-only;
                                 };
                         };
 
-                        cpld@6,0 {
+                        cpld: cpld@6,0 {
                                 compatible = "imt,cpld-821";
                                 reg = <0x06 0x00 0x50>;
                                 interrupt-controller;
-                                #interrupt-cells = <0x02>;
-                                interrupt-parent = <0x1b>;
+                                #interrupt-cells = <2>;
+                                interrupt-parent = <&gpio>;
                                 interrupts = <0x01 0x08>;
-                                #address-cells = <0x01>;
-                                #size-cells = <0x01>;
+                                #address-cells = <1>;
+                                #size-cells = <1>;
                                 linux,phandle = <0x1d>;
                                 phandle = <0x1d>;
 
+				/* Unused
                                 i2cbb@1b {
                                         compatible = "imt,i2c-bitbang";
                                         reg = <0x1b 0x01>;
-                                        #address-cells = <0x01>;
-                                        #size-cells = <0x00>;
+                                        #address-cells = <1>;
+                                        #size-cells = <0>;
 
                                         bid@50 {
                                                 compatible = "renesas,board-id";
                                                 reg = <0x50>;
                                         };
                                 };
+				*/
 
                                 i2cmux@1f {
                                         compatible = "imt,i2c-mux";
                                         reg = <0x1f 0x01>;
-                                        #address-cells = <0x01>;
-                                        #size-cells = <0x00>;
+                                        #address-cells = <1>;
+                                        #size-cells = <0>;
                                         i2c-parent = <0x1c>;
                                         bus = <0x00>;
 
                                         i2c@0 {
                                                 reg = <0x00>;
-                                                #address-cells = <0x01>;
-                                                #size-cells = <0x00>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
                                                 i2c-name = "ge0_6";
 
                                                 eeprom@50 {
@@ -369,8 +388,8 @@
 
                                         i2c@1 {
                                                 reg = <0x01>;
-                                                #address-cells = <0x01>;
-                                                #size-cells = <0x00>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
                                                 i2c-name = "ge0_7";
 
                                                 eeprom@50 {
@@ -400,8 +419,8 @@
 
                                         i2c@2 {
                                                 reg = <0x02>;
-                                                #address-cells = <0x01>;
-                                                #size-cells = <0x00>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
                                                 i2c-name = "ge0_4";
 
                                                 eeprom@50 {
@@ -431,8 +450,8 @@
 
                                         i2c@3 {
                                                 reg = <0x03>;
-                                                #address-cells = <0x01>;
-                                                #size-cells = <0x00>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
                                                 i2c-name = "ge0_5";
 
                                                 eeprom@50 {
@@ -462,8 +481,8 @@
 
                                         i2c@4 {
                                                 reg = <0x04>;
-                                                #address-cells = <0x01>;
-                                                #size-cells = <0x00>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
                                                 i2c-name = "ge0_2";
 
                                                 eeprom@50 {
@@ -493,8 +512,8 @@
 
                                         i2c@5 {
                                                 reg = <0x05>;
-                                                #address-cells = <0x01>;
-                                                #size-cells = <0x00>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
                                                 i2c-name = "ge0_3";
 
                                                 eeprom@50 {
@@ -524,8 +543,8 @@
 
                                         i2c@6 {
                                                 reg = <0x06>;
-                                                #address-cells = <0x01>;
-                                                #size-cells = <0x00>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
                                                 i2c-name = "ge0_0";
 
                                                 eeprom@50 {
@@ -555,8 +574,8 @@
 
                                         i2c@7 {
                                                 reg = <0x07>;
-                                                #address-cells = <0x01>;
-                                                #size-cells = <0x00>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
                                                 i2c-name = "ge0_1";
 
                                                 eeprom@50 {
@@ -586,8 +605,8 @@
 
                                         i2c@10 {
                                                 reg = <0x10>;
-                                                #address-cells = <0x01>;
-                                                #size-cells = <0x00>;
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
                                                 i2c-name = "temp";
 
                                                 temp@4c {
@@ -597,7 +616,7 @@
                                         };
                                 };
 
-                                mdio@30 {
+                                smi1: mdio@30 {
                                         compatible = "imt,mdio";
                                         reg = <0x30 0x08>;
                                 };
@@ -612,25 +631,29 @@
                                         phandle = <0x1c>;
                                 };
 
+				/* Not used
                                 ufm@40 {
                                         compatible = "imt,ufm";
                                         reg = <0x40 0x08>;
                                 };
+				*/
 
+				/* Unused?
                                 avr@48 {
                                         compatible = "imt,avr";
                                         reg = <0x48 0x38>;
                                 };
+				*/
                         };
                 };
 
-                dma-engine@1180000000100 {
+                dma0: dma-engine@1180000000100 {
                         compatible = "cavium,octeon-5750-bootbus-dma";
                         reg = <0x11800 0x100 0x00 0x08>;
                         interrupts = <0x00 0x3f>;
                 };
 
-                dma-engine@1180000000108 {
+                dma1: dma-engine@1180000000108 {
                         compatible = "cavium,octeon-5750-bootbus-dma";
                         reg = <0x11800 0x108 0x00 0x08>;
                         interrupts = <0x00 0x3f>;
@@ -640,20 +663,20 @@
                         compatible = "cavium,octeon-6335-uctl";
                         reg = <0x11800 0x6f000000 0x00 0x100>;
                         ranges;
-                        #address-cells = <0x02>;
-                        #size-cells = <0x02>;
+                        #address-cells = <2>;
+                        #size-cells = <2>;
                         refclk-frequency = <0xb71b00>;
                         refclk-type = "crystal";
 
                         ehci@16f0000000000 {
-                                compatible = "cavium,octeon-6335-ehci\0usb-ehci";
+                                compatible = "cavium,octeon-6335-ehci", "usb-ehci";
                                 reg = <0x16f00 0x00 0x00 0x100>;
                                 interrupts = <0x00 0x38>;
                                 big-endian-regs;
                         };
 
                         ohci@16f0000000400 {
-                                compatible = "cavium,octeon-6335-ohci\0usb-ohci";
+                                compatible = "cavium,octeon-6335-ohci", "usb-ohci";
                                 reg = <0x16f00 0x400 0x00 0x100>;
                                 interrupts = <0x00 0x38>;
                                 big-endian-regs;
@@ -662,17 +685,14 @@
         };
 
         aliases {
-                mix0 = "/soc@0/ethernet@1070000100000";
-                pip = "/soc@0/pip@11800a0000000";
-                smi0 = "/soc@0/mdio@1180000001800";
-                smi1 = "/soc@0/mdio@1180000001900";
-                smi2 = "/soc@0/bootbus@1180000000000/cpld@6,0/mdio@30";
-                twsi0 = "/soc@0/i2c@1180000001000";
-                twsi1 = "/soc@0/i2c@1180000001200";
-                uart0 = "/soc@0/serial@1180000000800";
-                flash0 = "/soc@0/bootbus@1180000000000/nor@0,0";
-                emmc = "/soc@0/mmc@1180000002000";
-                cpld = "/soc@0/bootbus@1180000000000/cpld@6,0";
+                mix0 = "/soc/ethernet@1070000100000";
+                pip = "/soc/pip@11800a0000000";
+                twsi0 = "/soc/i2c@1180000001000";
+                twsi1 = "/soc/i2c@1180000001200";
+                uart0 = "/soc/serial@1180000000800";
+                flash0 = "/soc/bootbus@1180000000000/nor@0,0";
+                emmc = "/soc/mmc@1180000002000";
+                cpld = "/soc/bootbus@1180000000000/cpld@6,0";
         };
 };
 
