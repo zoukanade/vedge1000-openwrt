@@ -96,7 +96,7 @@ TARGET_DEVICES += ubnt_unifi-usg
 
 define Device/n821
   DEVICE_VENDOR := Cisco Viptela
-  DEVICE_MODEL := Viptela vEdge 1000
+  DEVICE_MODEL := vEdge 1000
   BOARD_NAME := imt,n821
   DEVICE_PACKAGES += kmod-gpio-button-hotplug kmod-leds-gpio kmod-of-mdio \
 	kmod-sfp kmod-usb3 kmod-usb-dwc3 kmod-usb-storage-uas kmod-rtc-ds1307 \
