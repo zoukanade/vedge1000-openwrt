@@ -25,6 +25,15 @@ platform_copy_config_helper() {
 	umount /mnt
 }
 
+platform_copy_config_helper_n821() {
+	# TODO: Figure out the location dynamically
+	local device=/dev/sda1
+
+	mount -t ext2 "$device" /mnt
+	cp -af "$UPGRADE_BACKUP" "/mnt/$BACKUP_FILE"
+	umount /mnt
+}
+
 platform_copy_config() {
 	case "$(board_name)" in
 	erlite|\
@@ -37,6 +46,9 @@ platform_copy_config() {
 	ubnt,edgerouter-4|\
 	ubnt,edgerouter-6p)
 		platform_copy_config_helper /dev/mmcblk0p1
+		;;
+	n821)
+		platform_copy_config_helper_n821
 		;;
 	esac
 }
@@ -60,14 +72,20 @@ platform_do_flash() {
 		echo "flashing Itus Kernel to /boot/$kernel (/dev/mmblk1p1)"
 		tar -Oxf $tar_file "$board_dir/kernel" > /boot/$kernel
 	else
-		mount -t vfat /dev/$kernel /boot
+		if [ $board = "n821" ]; then
+			# TODO: Find the usb disk and mount it on /boot
+			mount -t ext2 /dev/sda1 /boot
+			touch /boot/in_prod
+		else
+			mount -t vfat /dev/$kernel /boot
+		fi
 
 		[ -f /boot/vmlinux.64 -a ! -L /boot/vmlinux.64 ] && {
 			mv /boot/vmlinux.64 /boot/vmlinux.64.previous
 			mv /boot/vmlinux.64.md5 /boot/vmlinux.64.md5.previous
 		}
 
-		echo "flashing kernel to /dev/$kernel"
+		echo "flashing kernel to $(awk '/\/boot/ {print $1}' /proc/mounts)"
 		tar xf $tar_file $board_dir/kernel -O > /boot/vmlinux.64
 		md5sum /boot/vmlinux.64 | cut -f1 -d " " > /boot/vmlinux.64.md5
 	fi
@@ -99,6 +117,9 @@ platform_do_upgrade() {
 	itus,shield-router)
 		kernel=ItusrouterImage
 		;;
+	n821)
+		kernel=dummy
+		;;
 	*)
 		return 1
 	esac
@@ -122,7 +143,8 @@ platform_check_image() {
 	itus,shield-router | \
 	ubnt,edgerouter-4 | \
 	ubnt,edgerouter-6p | \
-	ubnt,usg)
+	ubnt,usg | \
+	n821)
 		local kernel_length=$(tar xf $tar_file $board_dir/kernel -O | wc -c 2> /dev/null)
 		local rootfs_length=$(tar xf $tar_file $board_dir/root -O | wc -c 2> /dev/null)
 		[ "$kernel_length" = 0 -o "$rootfs_length" = 0 ] && {

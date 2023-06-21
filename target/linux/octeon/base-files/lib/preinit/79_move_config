@@ -11,6 +11,16 @@ move_config() {
 	}
 }
 
+move_config_n821() {
+	. /lib/upgrade/common.sh
+
+	# TODO: Figure out correct location dynamically
+	mount -t ext2 "/dev/sda1" /mnt
+	[ -f "/mnt/$BACKUP_FILE" ] && mv -f "/mnt/$BACKUP_FILE" /
+	umount /mnt
+}
+
+
 octeon_move_config() {
 	. /lib/functions.sh
 
@@ -26,6 +36,10 @@ octeon_move_config() {
 		ubnt,edgerouter-6p)
 			move_config "/dev/mmcblk0p1"
 			;;
+		n821)
+			move_config_n821
+			;;
+
 	esac
 }
 
