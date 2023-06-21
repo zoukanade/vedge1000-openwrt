@@ -5,8 +5,8 @@
 #include <dt-bindings/interrupt-controller/irq.h>
 
 / {
-        model = "imt,n821";
-        compatible = "imt,n821";
+        model = "Cisco/Viptela vEdge 1000";
+        compatible = "n821";
         #address-cells = <2>;
         #size-cells = <2>;
         interrupt-parent = <&ciu>;
@@ -76,7 +76,7 @@
                                         nvmem-cells = <&macaddr_eeprom>;
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(3)>;
-                                        label = "ge0_2";
+                                        label = "lan2";
                                         phy-handle = <&ge0_2_phy>;
                                 };
 
@@ -86,7 +86,7 @@
                                         nvmem-cells = <&macaddr_eeprom>;
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(4)>;
-                                        label = "ge0_3";
+                                        label = "lan3";
                                         phy-handle = <&ge0_3_phy>;
                                 };
 
@@ -96,7 +96,7 @@
                                         nvmem-cells = <&macaddr_eeprom>;
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(1)>;
-                                        label = "ge0_0";
+                                        label = "lan0";
                                         cavium,sgmii-mac-1000x-mode;
                                 };
 
@@ -106,7 +106,7 @@
                                         nvmem-cells = <&macaddr_eeprom>;
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(2)>;
-                                        label = "ge0_1";
+                                        label = "lan1";
                                         cavium,sgmii-mac-1000x-mode;
                                 };
                         };
@@ -123,7 +123,7 @@
                                         nvmem-cells = <&macaddr_eeprom>;
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(7)>;
-                                        label = "ge0_6";
+                                        label = "lan6";
                                         phy-handle = <&ge0_6_phy>;
                                 };
 
@@ -133,7 +133,7 @@
                                         nvmem-cells = <&macaddr_eeprom>;
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(8)>;
-                                        label = "ge0_7";
+                                        label = "lan7";
                                         phy-handle = <&ge0_7_phy>;
                                 };
 
@@ -143,7 +143,7 @@
                                         nvmem-cells = <&macaddr_eeprom>;
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(5)>;
-                                        label = "ge0_4";
+                                        label = "lan4";
                                         phy-handle = <&ge0_4_phy>;
                                 };
 
@@ -153,7 +153,7 @@
                                         nvmem-cells = <&macaddr_eeprom>;
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(6)>;
-                                        label = "ge0_5";
+                                        label = "lan5";
                                         phy-handle = <&ge0_5_phy>;
                                 };
                         };
@@ -470,7 +470,6 @@
                                                 i2c-name = "ge0_2";
                                                 #address-cells = <1>;
                                                 #size-cells = <0>;
-
 #ifndef PHYLINK_SFP
                                                 ge0_2_mdio: mdio@56 {
                                                         compatible = "mdio-i2c-gen";
