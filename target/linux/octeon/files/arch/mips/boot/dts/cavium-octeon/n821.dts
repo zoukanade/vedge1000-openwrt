@@ -309,7 +309,6 @@
                                 partition@fe0000 {
                                         label = "environment";
                                         reg = <0xfe0000 0x20000>;
-                                        read-only;
                                 };
                         };
 
