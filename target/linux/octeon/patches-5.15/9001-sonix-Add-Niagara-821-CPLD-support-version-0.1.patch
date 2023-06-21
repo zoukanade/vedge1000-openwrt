@@ -1,4 +1,4 @@
-From ef3e2fe43a1d1882c0f89efb5b59aa3f3c46bc4e Mon Sep 17 00:00:00 2001
+From 87c20d7bb04972506d5269d5c879f5a7e94fbf33 Mon Sep 17 00:00:00 2001
 From: Christian Svensson <blue@cmd.nu>
 Date: Wed, 21 Jun 2023 11:59:42 +0200
 Subject: [PATCH 9001/9001] sonix: Add Niagara 821 CPLD support, version 0.1
@@ -7,7 +7,7 @@ Functionally sort of complete patch. Enough for production for now.
 ---
  drivers/staging/Kconfig                  |   2 +
  drivers/staging/Makefile                 |   1 +
- drivers/staging/n821-cpld/Kconfig        |  57 +++++
+ drivers/staging/n821-cpld/Kconfig        |  58 +++++
  drivers/staging/n821-cpld/Makefile       |  16 ++
  drivers/staging/n821-cpld/cpld.h         |  28 +++
  drivers/staging/n821-cpld/cpld_core.c    | 154 +++++++++++++
@@ -16,7 +16,7 @@ Functionally sort of complete patch. Enough for production for now.
  drivers/staging/n821-cpld/cpld_i2c.c     | 266 +++++++++++++++++++++++
  drivers/staging/n821-cpld/cpld_psu.c     | 135 ++++++++++++
  drivers/staging/n821-cpld/mdio-i2c-gen.c |  92 ++++++++
- 11 files changed, 1034 insertions(+)
+ 11 files changed, 1035 insertions(+)
  create mode 100644 drivers/staging/n821-cpld/Kconfig
  create mode 100644 drivers/staging/n821-cpld/Makefile
  create mode 100644 drivers/staging/n821-cpld/cpld.h
@@ -49,10 +49,10 @@ index c7f8d8d8dd11..efeda9bf2243 100644
 +obj-$(CONFIG_N821_CPLD) 	+= n821-cpld/
 diff --git a/drivers/staging/n821-cpld/Kconfig b/drivers/staging/n821-cpld/Kconfig
 new file mode 100644
-index 000000000000..918e64549be0
+index 000000000000..1db74863f66d
 --- /dev/null
 +++ b/drivers/staging/n821-cpld/Kconfig
-@@ -0,0 +1,57 @@
+@@ -0,0 +1,58 @@
 +# SPDX-License-Identifier: GPL-2.0
 +config N821_CPLD
 +	tristate "Interface Masters Niagara 821 CPLD support"
@@ -75,6 +75,7 @@ index 000000000000..918e64549be0
 +	tristate "N821 CPLD I2C controller"
 +	depends on N821_CPLD && I2C
 +	select REGMAP_MMIO
++	select MDIO_I2C  # Needed for mdio-i2c-gen
 +	help
 +	  TODO
 +
