@@ -1,5 +1,9 @@
 /dts-v1/;
 
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+
 / {
         model = "imt,n821";
         compatible = "imt,n821";
@@ -28,8 +32,6 @@
                         interrupt-controller;
                         #interrupt-cells = <2>;
                         interrupts = <0x00 0x10>;
-                        linux,phandle = <0x1b>;
-                        phandle = <0x1b>;
                 };
 
                 smi0: mdio@1180000001800 {
@@ -63,7 +65,6 @@
                         reg = <0x11800 0xa0000000 0x00 0x2000>;
 
                         interface@0 {
-                                cavium,qlm-trim = "0,sgmii";
                                 compatible = "cavium,octeon-3860-pip-interface";
                                 #address-cells = <1>;
                                 #size-cells = <0>;
@@ -72,11 +73,11 @@
                                 ethernet@0 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x00>;
-                                        local-mac-address = [00 00 00 00 00 00];
                                         nvmem-cells = <&macaddr_eeprom>;
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(3)>;
                                         label = "ge0_2";
+                                        phy-handle = <&ge0_2_phy>;
                                 };
 
                                 ethernet@1 {
@@ -86,6 +87,7 @@
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(4)>;
                                         label = "ge0_3";
+                                        phy-handle = <&ge0_3_phy>;
                                 };
 
                                 ethernet@2 {
@@ -95,6 +97,7 @@
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(1)>;
                                         label = "ge0_0";
+                                        cavium,sgmii-mac-1000x-mode;
                                 };
 
                                 ethernet@3 {
@@ -104,11 +107,11 @@
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(2)>;
                                         label = "ge0_1";
+                                        cavium,sgmii-mac-1000x-mode;
                                 };
                         };
 
                         interface@1 {
-                                cavium,qlm-trim = "1,sgmii";
                                 compatible = "cavium,octeon-3860-pip-interface";
                                 #address-cells = <1>;
                                 #size-cells = <0>;
@@ -121,6 +124,7 @@
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(7)>;
                                         label = "ge0_6";
+                                        phy-handle = <&ge0_6_phy>;
                                 };
 
                                 ethernet@1 {
@@ -130,6 +134,7 @@
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(8)>;
                                         label = "ge0_7";
+                                        phy-handle = <&ge0_7_phy>;
                                 };
 
                                 ethernet@2 {
@@ -139,6 +144,7 @@
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(5)>;
                                         label = "ge0_4";
+                                        phy-handle = <&ge0_4_phy>;
                                 };
 
                                 ethernet@3 {
@@ -148,6 +154,7 @@
                                         nvmem-cell-names = "mac-address";
                                         mac-address-increment = <(6)>;
                                         label = "ge0_5";
+                                        phy-handle = <&ge0_5_phy>;
                                 };
                         };
                 };
@@ -286,6 +293,7 @@
                         flash0: nor@0,0 {
                                 compatible = "cfi-flash";
                                 reg = <0x00 0x00 0x1000000>;
+                                /* not sure about these values */
                                 bank-width = <2>;
                                 device-width = <1>;
 
@@ -306,8 +314,242 @@
                         };
 
                         cpld: cpld@6,0 {
-                                compatible = "imt,cpld-821";
-                                reg = <0x06 0x00 0x50>;
+                                compatible = "n821,cpld", "syscon", "simple-mfd";
+                                #address-cells = <1>;
+                                #size-cells = <1>;
+                                reg-io-width = <1>; // Syscon uses 4-byte accesses by default
+
+                                reg = <0x06 0x00 0x28>;     // This is the regmap to be defined for syscon devices..
+                                ranges = <0 0x06 0x0 0x50>; // .. and this is the addresses to map general subdevices on
+
+                                interrupt-controller;
+                                #interrupt-cells = <1>;
+                                interrupts-extended = <&gpio 1 IRQ_TYPE_LEVEL_LOW>;
+
+                                cpldi2c: n821-cpld-i2c@38 {
+                                        compatible = "n821,cpld-i2c";
+                                        reg = <0x38 0x8>;
+                                        interrupts = <0>; // TODO: Verify correct IRQ
+                                };
+
+                                fans: n821-cpld-fan {
+                                        compatible = "n821,cpld-fan";
+                                };
+
+                                sfpgpio: n821-cpld-gpio {
+                                        compatible = "n821,cpld-gpio";
+                                        #gpio-cells = <2>;
+                                };
+
+                                psus: n821-cpld-psu {
+                                        compatible = "n821,cpld-psu";
+                                };
+
+                                poweroff {
+                                        compatible = "syscon-poweroff";
+                                        regmap = <&cpld>;
+                                        offset = <0x5>;
+                                        value = <0>;
+                                        mask = <0xff>;
+                                };
+
+                                reset-button {
+                                        compatible = "gpio-keys";
+                                        reset {
+                                                  label = "reset";
+                                                  interrupts = <1>;
+                                                  linux,code = <KEY_RESTART>;
+                                                  debounce-interval = <60>;
+                                        };
+                                };
+
+                                sysled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x12>;
+                                        mask = <0x1>;
+                                        label = "green:activity";
+                                        linux,default-trigger = "heartbeat";
+                                        default-state = "on";
+                                };
+                                sysled-flash {
+                                        compatible = "register-bit-led";
+                                        offset = <0x12>;
+                                        mask = <0x2>;
+                                        label = "green:activity-flash";
+                                        default-state = "off";
+                                };
+                                statusled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x12>;
+                                        mask = <0x10>;
+                                        label = "green:status";
+                                        default-state = "on";
+                                };
+
+                                i2cmux0: i2c-mux@1f {
+                                        compatible = "i2c-mux-reg";
+                                        reg = <0x1f 0x1>;
+                                        #address-cells = <1>;
+                                        #size-cells = <0>;
+                                        i2c-parent = <&cpldi2c>;
+
+                                        ge0_6_i2c: i2c@0 {
+                                                reg = <0x00>;
+                                                i2c-name = "ge0_6";
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+#ifndef PHYLINK_SFP
+                                                ge0_6_mdio: mdio@56 {
+                                                        compatible = "mdio-i2c-gen";
+                                                        reg = <0x56>;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+                                                        ge0_6_phy: phy@16 {
+                                                                reg = <0x16>;
+                                                        };
+                                                };
+#endif
+                                        };
+
+                                        ge0_7_i2c: i2c@1 {
+                                                reg = <0x01>;
+                                                i2c-name = "ge0_7";
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+#ifndef PHYLINK_SFP
+                                                ge0_7_mdio: mdio@56 {
+                                                        compatible = "mdio-i2c-gen";
+                                                        reg = <0x56>;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+                                                        ge0_7_phy: phy@16 {
+                                                                reg = <0x16>;
+                                                        };
+                                                };
+#endif
+                                        };
+
+                                        ge0_4_i2c: i2c@2 {
+                                                reg = <0x02>;
+                                                i2c-name = "ge0_4";
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+#ifndef PHYLINK_SFP
+                                                ge0_4_mdio: mdio@56 {
+                                                        compatible = "mdio-i2c-gen";
+                                                        reg = <0x56>;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+                                                        ge0_4_phy: phy@16 {
+                                                                reg = <0x16>;
+                                                        };
+                                                };
+#endif
+                                        };
+
+                                        ge0_5_i2c: i2c@3 {
+                                                reg = <0x03>;
+                                                i2c-name = "ge0_5";
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+#ifndef PHYLINK_SFP
+                                                ge0_5_mdio: mdio@56 {
+                                                        compatible = "mdio-i2c-gen";
+                                                        reg = <0x56>;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+                                                        ge0_5_phy: phy@16 {
+                                                                reg = <0x16>;
+                                                        };
+                                                };
+#endif
+                                        };
+
+                                        ge0_2_i2c: i2c@4 {
+                                                reg = <0x04>;
+                                                i2c-name = "ge0_2";
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+
+#ifndef PHYLINK_SFP
+                                                ge0_2_mdio: mdio@56 {
+                                                        compatible = "mdio-i2c-gen";
+                                                        reg = <0x56>;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+                                                        ge0_2_phy: phy@16 {
+                                                                reg = <0x16>;
+                                                        };
+                                                };
+#endif
+                                        };
+
+                                        ge0_3_i2c: i2c@5 {
+                                                reg = <0x05>;
+                                                i2c-name = "ge0_3";
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+#ifndef PHYLINK_SFP
+                                                ge0_3_mdio: mdio@56 {
+                                                        compatible = "mdio-i2c-gen";
+                                                        reg = <0x56>;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+                                                        ge0_3_phy: phy@16 {
+                                                                reg = <0x16>;
+                                                        };
+                                                };
+#endif
+                                        };
+
+                                        ge0_0_i2c: i2c@6 {
+                                                reg = <0x06>;
+                                                i2c-name = "ge0_0";
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+#ifndef PHYLINK_SFP
+                                                ge0_0_mdio: mdio@56 {
+                                                        compatible = "mdio-i2c-gen";
+                                                        reg = <0x56>;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+                                                        ge0_0_phy: phy@16 {
+                                                                reg = <0x16>;
+                                                        };
+                                                };
+#endif
+                                        };
+
+                                        ge0_1_i2c: i2c@7 {
+                                                reg = <0x07>;
+                                                i2c-name = "ge0_1";
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+#ifndef PHYLINK_SFP
+                                                ge0_1_mdio: mdio@56 {
+                                                        compatible = "mdio-i2c-gen";
+                                                        reg = <0x56>;
+                                                        #address-cells = <1>;
+                                                        #size-cells = <0>;
+                                                        ge0_1_phy: phy@16 {
+                                                                reg = <0x16>;
+                                                        };
+                                                };
+#endif
+                                        };
+
+                                        i2c@10 {
+                                                reg = <0x10>;
+                                                i2c-name = "temp";
+                                                #address-cells = <1>;
+                                                #size-cells = <0>;
+
+                                                temp@4c {
+                                                        compatible = "max6657";
+                                                        reg = <0x4c>;
+                                                };
+                                        };
+                                };
                         };
                 };
 
