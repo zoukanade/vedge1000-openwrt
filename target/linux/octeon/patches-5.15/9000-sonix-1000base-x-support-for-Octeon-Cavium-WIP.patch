@@ -1,7 +1,7 @@
 From cde06dd32cf51c133ce3b6f0184b0bb3d41eb47d Mon Sep 17 00:00:00 2001
 From: Christian Svensson <blue@cmd.nu>
 Date: Wed, 21 Jun 2023 11:56:21 +0200
-Subject: [PATCH 9000/9001] sonix: 1000base-x support for Octeon Cavium [WIP]
+Subject: [PATCH 9000/9005] sonix: 1000base-x support for Octeon Cavium [WIP]
 
 This patch needs cleaning up.
 

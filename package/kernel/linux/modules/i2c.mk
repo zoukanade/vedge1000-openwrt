@@ -200,6 +200,22 @@ endef
 $(eval $(call KernelPackage,i2c-mux-gpio))
 
 
+I2C_MUX_REG_MODULES:= \
+  CONFIG_I2C_MUX_REG:drivers/i2c/muxes/i2c-mux-reg
+
+define KernelPackage/i2c-mux-reg
+  $(call i2c_defaults,$(I2C_MUX_REG_MODULES),51)
+  TITLE:=Register-based I2C mux/switches
+  DEPENDS:=+kmod-i2c-mux
+endef
+
+define KernelPackage/i2c-mux-reg/description
+ Kernel modules for register-based I2C bus mux/switching devices
+endef
+
+$(eval $(call KernelPackage,i2c-mux-reg))
+
+
 I2C_MUX_PCA9541_MODULES:= \
   CONFIG_I2C_MUX_PCA9541:drivers/i2c/muxes/i2c-mux-pca9541
 
@@ -284,7 +300,6 @@ endef
 $(eval $(call KernelPackage,i2c-smbus))
 
 
-
 I2C_TINY_USB_MODULES:= \
   CONFIG_I2C_TINY_USB:drivers/i2c/busses/i2c-tiny-usb
 
@@ -301,4 +316,19 @@ endef
 
 $(eval $(call KernelPackage,i2c-tiny-usb))
 
+
+I2C_N821_CPLD_MODULES:= \
+  CONFIG_N821_CPLD_I2C:drivers/staging/n821-cpld/n821-cpld-i2c
+
+define KernelPackage/i2c-n821-cpld
+  $(call i2c_defaults,$(I2C_N821_CPLD_MODULES),59)
+  TITLE:=I2C N821 CPLD adapter.
+  DEPENDS:=+kmod-i2c-core
+endef
+
+define KernelPackage/i2c-n821-cpld/description
+ Kernel module for the Niagara 821 CPLD I2C adapter.
+endef
+
+$(eval $(call KernelPackage,i2c-n821-cpld))
 

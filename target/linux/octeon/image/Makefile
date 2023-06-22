@@ -98,10 +98,11 @@ define Device/n821
   DEVICE_VENDOR := Cisco Viptela
   DEVICE_MODEL := vEdge 1000
   BOARD_NAME := imt,n821
-  DEVICE_PACKAGES += kmod-gpio-button-hotplug kmod-leds-gpio kmod-of-mdio \
+  DEVICE_PACKAGES += kmod-input-gpio-keys kmod-leds-gpio kmod-of-mdio \
 	kmod-sfp kmod-usb3 kmod-usb-dwc3 kmod-usb-storage-uas kmod-rtc-ds1307 \
 	kmod-hwmon-max6697 kmod-hwmon-lm90 kmon-hwmon-jc42 kmod-eeprom-at24 \
-	kmod-i2c-mux
+	kmod-i2c-mux-reg kmod-hwmon-n821-cpld-fan kmod-hwmon-n821-cpld-psu \
+	kmod-gpio-n821-cpld kmod-n821-cpld
   DEFAULT_PACKAGES += uboot-envtools
   KERNEL := kernel-bin | patch-cmdline | append-dtb-to-elf
   KERNEL_DEPENDS := $$(wildcard $(DTS_DIR)/$(DEVICE_DTS).dts)
