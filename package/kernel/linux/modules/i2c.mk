@@ -332,3 +332,19 @@ endef
 
 $(eval $(call KernelPackage,i2c-n821-cpld))
 
+
+I2C_MDIO_I2C_GEN_MODULES:= \
+  CONFIG_N821_CPLD_I2C:drivers/staging/n821-cpld/mdio-i2c-gen
+
+define KernelPackage/mdio-i2c-gen
+  $(call i2c_defaults,$(I2C_MDIO_I2C_GEN_MODULES),59)
+  TITLE:=I2C to MDIO generic adapter
+  DEPENDS:=+kmod-i2c-core +kmod-sfp
+endef
+
+define KernelPackage/mdio-i2c-gen/description
+ Kernel module for a generic MDIO bus attached to an I2C adapter.
+endef
+
+$(eval $(call KernelPackage,mdio-i2c-gen))
+
