@@ -1,7 +1,7 @@
 From 87c20d7bb04972506d5269d5c879f5a7e94fbf33 Mon Sep 17 00:00:00 2001
 From: Christian Svensson <blue@cmd.nu>
 Date: Wed, 21 Jun 2023 11:59:42 +0200
-Subject: [PATCH 9001/9005] sonix: Add Niagara 821 CPLD support, version 0.1
+Subject: [PATCH] sonix: Add Niagara 821 CPLD support, version 0.1
 
 Functionally sort of complete patch. Enough for production for now.
 ---

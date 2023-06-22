@@ -1,7 +1,7 @@
 From 99051719d2354db90d31c0c808ce57114c0589d2 Mon Sep 17 00:00:00 2001
 From: Christian Svensson <blue@cmd.nu>
 Date: Thu, 22 Jun 2023 15:39:10 +0200
-Subject: [PATCH 9005/9005] sonix: Fix logic inversion on PSU test
+Subject: [PATCH] sonix: Fix logic inversion on PSU test
 
 ---
  drivers/staging/n821-cpld/cpld_psu.c | 4 ++--

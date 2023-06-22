@@ -1,8 +1,7 @@
 From cad6591a73652ad309504b291c761d132283096a Mon Sep 17 00:00:00 2001
 From: Christian Svensson <blue@cmd.nu>
 Date: Thu, 22 Jun 2023 13:40:01 +0200
-Subject: [PATCH 9003/9005] sonix: wait for regmap to be available for n821
- cpld
+Subject: [PATCH] sonix: wait for regmap to be available for n821 cpld
 
 ---
  drivers/staging/n821-cpld/cpld_core.c | 4 ++--

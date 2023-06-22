@@ -1,7 +1,7 @@
 From caf5d22d10fdfc04cf6ece93cac7833348cee7b0 Mon Sep 17 00:00:00 2001
 From: Christian Svensson <blue@cmd.nu>
 Date: Thu, 22 Jun 2023 15:21:12 +0200
-Subject: [PATCH 9004/9005] sonix: declare dependency on MFD_SYSCON
+Subject: [PATCH] sonix: declare dependency on MFD_SYSCON
 
 ---
  drivers/staging/n821-cpld/Kconfig | 6 +++++-

@@ -1,7 +1,7 @@
 From dde2b5529ed463127b0a7421071328314ee052b6 Mon Sep 17 00:00:00 2001
 From: Christian Svensson <blue@cmd.nu>
 Date: Thu, 22 Jun 2023 13:34:19 +0200
-Subject: [PATCH 9002/9005] sonix: Use busbar test register for PSU monitoring
+Subject: [PATCH] sonix: Use busbar test register for PSU monitoring
 
 The 0x6 register seems to be quite static while 0x20 is very responsive
 when voltage changes.
