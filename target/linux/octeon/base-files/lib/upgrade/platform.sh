@@ -75,6 +75,7 @@ platform_do_flash() {
 		if [ $board = "n821" ]; then
 			# TODO: Find the usb disk and mount it on /boot
 			mount -t ext2 /dev/sda1 /boot
+			fw_setenv bootcmd 'usb start; ext2load usb 0:1 $loadaddr vmlinux.64; bootoctlinux $loadaddr endbootargs root=/dev/sda2'
 			touch /boot/in_prod
 		else
 			mount -t vfat /dev/$kernel /boot

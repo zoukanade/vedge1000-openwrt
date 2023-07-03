@@ -103,8 +103,7 @@ define Device/n821
 	kmod-hwmon-max6697 kmod-hwmon-lm90 kmon-hwmon-jc42 kmod-eeprom-at24 \
 	kmod-i2c-mux-reg kmod-hwmon-n821-cpld-fan kmod-hwmon-n821-cpld-psu \
 	kmod-gpio-n821-cpld kmod-n821-cpld kmod-mdio-i2c-gen \
-	kmod-i2c-n821-cpld
-  DEFAULT_PACKAGES += uboot-envtools
+	kmod-i2c-n821-cpld uboot-envtools
   KERNEL := kernel-bin | patch-cmdline | append-dtb-to-elf
   KERNEL_DEPENDS := $$(wildcard $(DTS_DIR)/$(DEVICE_DTS).dts)
   DEVICE_DTS := n821
