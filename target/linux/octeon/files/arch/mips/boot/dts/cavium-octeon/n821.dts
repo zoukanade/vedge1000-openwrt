@@ -168,7 +168,7 @@
                         clock-frequency = <400000>;
 
                         jc42@18 {
-                                compatible = "jc42";
+                                compatible = "jedec,jc-42.4-temp";
                                 reg = <0x18>;
                         };
                 };
