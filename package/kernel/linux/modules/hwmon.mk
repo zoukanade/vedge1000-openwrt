@@ -388,7 +388,7 @@ define KernelPackage/hwmon-max6697
   TITLE:=MAX6697 monitoring support
   KCONFIG:=CONFIG_SENSORS_MAX6697
   FILES:=$(LINUX_DIR)/drivers/hwmon/max6697.ko
-  AUTOLOAD:=$(call AutoLoad,60,max6697 max6697)
+  AUTOLOAD:=$(call AutoProbe,max6697)
   $(call AddDepends/hwmon,+kmod-i2c-core)
 endef
 
