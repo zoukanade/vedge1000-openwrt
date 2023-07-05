@@ -2,6 +2,8 @@
 # Copyright (C) 2021 OpenWrt.org
 #
 
+RAMFS_COPY_BIN="/usr/sbin/blkid"
+
 platform_get_rootfs() {
 	local partdev
 
@@ -14,10 +16,10 @@ platform_get_rootfs() {
 
 platform_get_n821_disk() {
 	local partnum=$1
-	local MAJOR MINOR DEVNAME DEVTYPE
+	local DEVNAME
 	while read line; do
 		export -n "${line}"
-	done < /sys/devices/platform/soc/118006f000000.uctl/16f0000000000.ehci/usb*/*-*/*-*:1.0/host0/target0:0:0/0:0:0:0/block/sd?/uevent
+	done < $(echo /sys/devices/platform/soc/118006f000000.uctl/16f0000000000.ehci/usb*/*-*/*-*:1.0/host*/target*:0:0/*:0:0:0/block/sd?/uevent)
 	echo "/dev/${DEVNAME}${partnum}"
 }
 
@@ -69,13 +71,18 @@ platform_do_flash() {
 		tar -Oxf $tar_file "$board_dir/kernel" > /boot/$kernel
 	else
 		if [ "${board}" = "n821" ]; then
-			local rootfsuid
-			mount -t ext2 "/dev/${kernel}" /boot
-			rootfsuuid="$(blkid -o value -s UUID "${rootfs}")"
-			fw_setenv bootcmd 'usb start; ext2load usb 0:1 $loadaddr vmlinux.64; bootoctlinux $loadaddr endbootargs root=UUID='"${rootfsuuid}"
+			local rootpartuuid
+			rootpartuuid="$(/usr/sbin/blkid -o value -s PARTUUID "${rootfs}")"
+			if [ -n "${rootpartuuid}" ]; then
+				echo "setting root partition to PARTUUID=${rootpartuuid}"
+				fw_setenv bootcmd 'usb start; ext2load usb 0:1 $loadaddr vmlinux.64; bootoctlinux $loadaddr endbootargs root=PARTUUID='"${rootpartuuid}"
+			else
+				echo "WARNING: unable to figure out root partition UUID, leaving bootcmd unchanged"
+			fi
 			touch /boot/in_prod
+			mount -t ext2 "${kernel}" /boot
 		else
-			mount -t vfat /dev/$kernel /boot
+			mount -t vfat "${kernel}" /boot
 		fi
 
 		[ -f /boot/vmlinux.64 -a ! -L /boot/vmlinux.64 ] && {
@@ -110,11 +117,11 @@ platform_do_upgrade() {
 	er | \
 	ubnt,edgerouter-4 | \
 	ubnt,edgerouter-6p)
-		kernel=mmcblk0p1
+		kernel=/dev/mmcblk0p1
 		;;
 	erlite|\
 	ubnt,usg)
-		kernel=sda1
+		kernel=/dev/sda1
 		;;
 	itus,shield-router)
 		kernel=ItusrouterImage
