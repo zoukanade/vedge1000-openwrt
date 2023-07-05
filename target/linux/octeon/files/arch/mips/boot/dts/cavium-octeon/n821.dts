@@ -384,6 +384,102 @@
                                         label = "green:status";
                                         default-state = "on";
                                 };
+                                lan0-linkled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x17>;
+                                        mask = <0x1>;
+                                        label = "lan0:green:status";
+                                };
+                                lan0-actled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x17>;
+                                        mask = <0x4>;
+                                        label = "lan0:green:activity";
+                                };
+                                lan1-linkled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x17>;
+                                        mask = <0x10>;
+                                        label = "lan1:green:status";
+                                };
+                                lan1-actled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x17>;
+                                        mask = <0x40>;
+                                        label = "lan1:green:activity";
+                                };
+                                lan2-linkled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x16>;
+                                        mask = <0x1>;
+                                        label = "lan2:green:status";
+                                };
+                                lan2-actled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x16>;
+                                        mask = <0x4>;
+                                        label = "lan2:green:activity";
+                                };
+                                lan3-linkled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x16>;
+                                        mask = <0x10>;
+                                        label = "lan3:green:status";
+                                };
+                                lan3-actled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x16>;
+                                        mask = <0x40>;
+                                        label = "lan3:green:activity";
+                                };
+                                lan4-linkled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x15>;
+                                        mask = <0x1>;
+                                        label = "lan4:green:status";
+                                };
+                                lan4-actled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x15>;
+                                        mask = <0x4>;
+                                        label = "lan4:green:activity";
+                                };
+                                lan5-linkled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x15>;
+                                        mask = <0x10>;
+                                        label = "lan5:green:status";
+                                };
+                                lan5-actled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x15>;
+                                        mask = <0x40>;
+                                        label = "lan5:green:activity";
+                                };
+                                lan6-linkled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x14>;
+                                        mask = <0x1>;
+                                        label = "lan6:green:status";
+                                };
+                                lan6-actled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x14>;
+                                        mask = <0x4>;
+                                        label = "lan6:green:activity";
+                                };
+                                lan7-linkled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x14>;
+                                        mask = <0x10>;
+                                        label = "lan7:green:status";
+                                };
+                                lan7-actled {
+                                        compatible = "register-bit-led";
+                                        offset = <0x14>;
+                                        mask = <0x40>;
+                                        label = "lan7:green:activity";
+                                };
 
                                 i2cmux0: i2c-mux@1f {
                                         compatible = "i2c-mux-reg";
