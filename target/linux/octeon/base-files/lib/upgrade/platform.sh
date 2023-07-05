@@ -79,7 +79,6 @@ platform_do_flash() {
 			else
 				echo "WARNING: unable to figure out root partition UUID, leaving bootcmd unchanged"
 			fi
-			touch /boot/in_prod
 			mount -t ext2 "${kernel}" /boot
 		else
 			mount -t vfat "${kernel}" /boot
