@@ -3,33 +3,29 @@
 #
 
 platform_get_rootfs() {
-	local rootfsdev
+	local partdev
 
-	if read cmdline < /proc/cmdline; then
-		case "$cmdline" in
-			*root=*)
-				rootfsdev="${cmdline##*root=}"
-				rootfsdev="${rootfsdev%% *}"
-			;;
-		esac
+	export_bootdevice && export_partdevice partdev 1 || {
+		echo "Unable to determine upgrade device"
+		return 1
+	}
+	echo "/dev/$partdev"
+}
 
-		echo "${rootfsdev}"
-	fi
+platform_get_n821_disk() {
+	local partnum=$1
+	local MAJOR MINOR DEVNAME DEVTYPE
+	while read line; do
+		export -n "${line}"
+	done < /sys/devices/platform/soc/118006f000000.uctl/16f0000000000.ehci/usb*/*-*/*-*:1.0/host0/target0:0:0/0:0:0:0/block/sd?/uevent
+	echo "/dev/${DEVNAME}${partnum}"
 }
 
 platform_copy_config_helper() {
 	local device=$1
+	local fstype=$2
 
-	mount -t vfat "$device" /mnt
-	cp -af "$UPGRADE_BACKUP" "/mnt/$BACKUP_FILE"
-	umount /mnt
-}
-
-platform_copy_config_helper_n821() {
-	# TODO: Figure out the location dynamically
-	local device=/dev/sda1
-
-	mount -t ext2 "$device" /mnt
+	mount -t "${fstype}" "$device" /mnt
 	cp -af "$UPGRADE_BACKUP" "/mnt/$BACKUP_FILE"
 	umount /mnt
 }
@@ -38,17 +34,17 @@ platform_copy_config() {
 	case "$(board_name)" in
 	erlite|\
 	ubnt,usg)
-		platform_copy_config_helper /dev/sda1
+		platform_copy_config_helper /dev/sda1 vfat
 		;;
 	itus,shield-router)
-		platform_copy_config_helper /dev/mmcblk1p1
+		platform_copy_config_helper /dev/mmcblk1p1 vfat
 		;;
 	ubnt,edgerouter-4|\
 	ubnt,edgerouter-6p)
-		platform_copy_config_helper /dev/mmcblk0p1
+		platform_copy_config_helper /dev/mmcblk0p1 vfat
 		;;
 	n821)
-		platform_copy_config_helper_n821
+		platform_copy_config_helper "$(platform_get_n821_disk 1)" ext2
 		;;
 	esac
 }
@@ -72,10 +68,11 @@ platform_do_flash() {
 		echo "flashing Itus Kernel to /boot/$kernel (/dev/mmblk1p1)"
 		tar -Oxf $tar_file "$board_dir/kernel" > /boot/$kernel
 	else
-		if [ $board = "n821" ]; then
-			# TODO: Find the usb disk and mount it on /boot
-			mount -t ext2 /dev/sda1 /boot
-			fw_setenv bootcmd 'usb start; ext2load usb 0:1 $loadaddr vmlinux.64; bootoctlinux $loadaddr endbootargs root=/dev/sda2'
+		if [ "${board}" = "n821" ]; then
+			local rootfsuid
+			mount -t ext2 "/dev/${kernel}" /boot
+			rootfsuuid="$(blkid -o value -s UUID "${rootfs}")"
+			fw_setenv bootcmd 'usb start; ext2load usb 0:1 $loadaddr vmlinux.64; bootoctlinux $loadaddr endbootargs root=UUID='"${rootfsuuid}"
 			touch /boot/in_prod
 		else
 			mount -t vfat /dev/$kernel /boot
@@ -104,6 +101,10 @@ platform_do_upgrade() {
 	local rootfs="$(platform_get_rootfs)"
 	local kernel=
 
+	if [ ! -b "${rootfs}" ] && [ "${board}" = "n821" ]; then
+		# Default to the built-in USB disk for N821
+		rootfs="$(platform_get_n821_disk 2)"
+	fi
 	[ -b "${rootfs}" ] || return 1
 	case "$board" in
 	er | \
@@ -119,7 +120,7 @@ platform_do_upgrade() {
 		kernel=ItusrouterImage
 		;;
 	n821)
-		kernel=dummy
+		kernel="$(platform_get_n821_disk 1)"
 		;;
 	*)
 		return 1
