@@ -86,7 +86,7 @@ platform_do_flash() {
 			rootpartuuid="$(/usr/sbin/blkid -o value -s PARTUUID "${rootfs}")"
 			if [ -n "${rootpartuuid}" ]; then
 				echo "setting root partition to PARTUUID=${rootpartuuid}"
-				fw_setenv bootcmd 'usb start; ext2load usb 0:1 $loadaddr vmlinux.64; bootoctlinux $loadaddr endbootargs root=PARTUUID='"${rootpartuuid}"
+				fw_setenv bootcmd 'usb start; ext2load usb 0:1 $loadaddr vmlinux.64; bootoctlinux $loadaddr coremask=f endbootargs root=PARTUUID='"${rootpartuuid}"
 			else
 				echo "WARNING: unable to figure out root partition UUID, leaving bootcmd unchanged"
 			fi
