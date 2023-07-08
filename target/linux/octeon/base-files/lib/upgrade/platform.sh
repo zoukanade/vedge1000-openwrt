@@ -5,13 +5,24 @@
 RAMFS_COPY_BIN="/usr/sbin/blkid"
 
 platform_get_rootfs() {
-	local partdev
+	local rootfsdev
+	local rootpartuuid
 
-	export_bootdevice && export_partdevice partdev 1 || {
-		echo "Unable to determine upgrade device"
-		return 1
-	}
-	echo "/dev/$partdev"
+	if read cmdline < /proc/cmdline; then
+		case "$cmdline" in
+			*root=PARTUUID=*)
+				rootpartuuid="${cmdline##*root=PARTUUID=}"
+				rootpartuuid="${rootpartuuid%% *}"
+				rootfsdev="$(blkid -o device -t PARTUUID="${rootpartuuid}")"
+			;;
+			*root=*)
+				rootfsdev="${cmdline##*root=}"
+				rootfsdev="${rootfsdev%% *}"
+			;;
+		esac
+
+		echo "${rootfsdev}"
+	fi
 }
 
 platform_get_n821_disk() {
