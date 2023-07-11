@@ -30,7 +30,7 @@ platform_get_n821_disk() {
 	local DEVNAME
 	while read line; do
 		export -n "${line}"
-	done < $(echo /sys/devices/platform/soc/118006f000000.uctl/16f0000000000.ehci/usb*/*-*/*-*:1.0/host*/target*:0:0/*:0:0:0/block/sd?/uevent)
+	done < $(find /sys/bus/platform/devices/16f0000000000.ehci/ -path \*block/sd[a-z]/uevent)
 	echo "/dev/${DEVNAME}${partnum}"
 }
 
