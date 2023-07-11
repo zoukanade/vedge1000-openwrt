@@ -94,21 +94,20 @@ define Device/ubnt_unifi-usg
 endef
 TARGET_DEVICES += ubnt_unifi-usg
 
-define Device/n821
+define Device/cisco_vedge1000
   DEVICE_VENDOR := Cisco Viptela
   DEVICE_MODEL := vEdge 1000
-  BOARD_NAME := imt,n821
+  BOARD_NAME := cisco,vedge1000
   DEVICE_PACKAGES += uboot-envtools kmod-hid kmod-input-gpio-keys kmod-of-mdio \
 	kmod-sfp kmod-usb3 kmod-usb-dwc3 kmod-usb-storage-uas kmod-rtc-ds1307 \
 	kmod-hwmon-max6697 kmod-hwmon-lm90 kmod-hwmon-jc42 kmod-eeprom-at24 \
 	kmod-i2c-mux-reg kmod-hwmon-n821-cpld-fan kmod-hwmon-n821-cpld-psu \
-	kmod-gpio-n821-cpld kmod-n821-cpld kmod-mdio-i2c-gen \
+	kmod-gpio-n821-cpld kmod-cisco-n821-cpld kmod-mdio-i2c-gen \
 	kmod-i2c-n821-cpld blkid
-  KERNEL := kernel-bin | patch-cmdline | append-dtb-to-elf
+  KERNEL := kernel-bin | append-dtb-elf
   KERNEL_DEPENDS := $$(wildcard $(DTS_DIR)/$(DEVICE_DTS).dts)
-  DEVICE_DTS := n821
-  CMDLINE := rootfstype=squashfs,ext4 rootwait
+  DEVICE_DTS := cn6130_cisco_vedge1000
 endef
-TARGET_DEVICES += n821
+TARGET_DEVICES += cisco_vedge1000
 
 $(eval $(call BuildImage))

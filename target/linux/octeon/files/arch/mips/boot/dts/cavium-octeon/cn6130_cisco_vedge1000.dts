@@ -6,12 +6,12 @@
 
 / {
         model = "Cisco/Viptela vEdge 1000";
-        compatible = "n821";
+        compatible = "cisco,vedge1000", "cavium,cn6130";
         #address-cells = <2>;
         #size-cells = <2>;
         interrupt-parent = <&ciu>;
 
-        soc {
+        soc@0 {
                 compatible = "simple-bus";
                 #address-cells = <2>;
                 #size-cells = <2>;
@@ -313,7 +313,7 @@
                         };
 
                         cpld: cpld@6,0 {
-                                compatible = "n821,cpld", "syscon", "simple-mfd";
+                                compatible = "cisco,n821-cpld", "syscon", "simple-mfd";
                                 #address-cells = <1>;
                                 #size-cells = <1>;
                                 reg-io-width = <1>; // Syscon uses 4-byte accesses by default
@@ -682,17 +682,6 @@
                                 big-endian-regs;
                         };
                 };
-        };
-
-        aliases {
-                mix0 = "/soc/ethernet@1070000100000";
-                pip = "/soc/pip@11800a0000000";
-                twsi0 = "/soc/i2c@1180000001000";
-                twsi1 = "/soc/i2c@1180000001200";
-                uart0 = "/soc/serial@1180000000800";
-                flash0 = "/soc/bootbus@1180000000000/nor@0,0";
-                emmc = "/soc/mmc@1180000002000";
-                cpld = "/soc/bootbus@1180000000000/cpld@6,0";
         };
 };
 

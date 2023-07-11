@@ -56,7 +56,7 @@ platform_copy_config() {
 	ubnt,edgerouter-6p)
 		platform_copy_config_helper /dev/mmcblk0p1 vfat
 		;;
-	n821)
+	cisco,vedge1000)
 		platform_copy_config_helper "$(platform_get_n821_disk 1)" ext2
 		;;
 	esac
@@ -81,12 +81,12 @@ platform_do_flash() {
 		echo "flashing Itus Kernel to /boot/$kernel (/dev/mmblk1p1)"
 		tar -Oxf $tar_file "$board_dir/kernel" > /boot/$kernel
 	else
-		if [ "${board}" = "n821" ]; then
+		if [ "${board}" = "cisco,vedge1000" ]; then
 			local rootpartuuid
 			rootpartuuid="$(/usr/sbin/blkid -o value -s PARTUUID "${rootfs}")"
 			if [ -n "${rootpartuuid}" ]; then
 				echo "setting root partition to PARTUUID=${rootpartuuid}"
-				fw_setenv bootcmd 'usb start; ext2load usb 0:1 $loadaddr vmlinux.64; bootoctlinux $loadaddr coremask=f endbootargs root=PARTUUID='"${rootpartuuid}"
+				fw_setenv bootcmd 'usb start; ext2load usb 0:1 $loadaddr vmlinux.64; bootoctlinux $loadaddr coremask=f endbootargs rootfstype=squashfs rootwait root=PARTUUID='"${rootpartuuid}"
 			else
 				echo "WARNING: unable to figure out root partition UUID, leaving bootcmd unchanged"
 			fi
@@ -118,7 +118,7 @@ platform_do_upgrade() {
 	local rootfs="$(platform_get_rootfs)"
 	local kernel=
 
-	if [ ! -b "${rootfs}" ] && [ "${board}" = "n821" ]; then
+	if [ ! -b "${rootfs}" ] && [ "${board}" = "cisco,vedge1000" ]; then
 		# Default to the built-in USB disk for N821
 		rootfs="$(platform_get_n821_disk 2)"
 	fi
@@ -136,7 +136,7 @@ platform_do_upgrade() {
 	itus,shield-router)
 		kernel=ItusrouterImage
 		;;
-	n821)
+	cisco,vedge1000)
 		kernel="$(platform_get_n821_disk 1)"
 		;;
 	*)
@@ -163,7 +163,7 @@ platform_check_image() {
 	ubnt,edgerouter-4 | \
 	ubnt,edgerouter-6p | \
 	ubnt,usg | \
-	n821)
+	cisco,vedge1000)
 		local kernel_length=$(tar xf $tar_file $board_dir/kernel -O | wc -c 2> /dev/null)
 		local rootfs_length=$(tar xf $tar_file $board_dir/root -O | wc -c 2> /dev/null)
 		[ "$kernel_length" = 0 -o "$rootfs_length" = 0 ] && {

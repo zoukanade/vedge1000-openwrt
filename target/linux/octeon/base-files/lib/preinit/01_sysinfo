@@ -9,7 +9,7 @@ do_sysinfo_octeon() {
 	# same supposedly unique board ID as the EdgeRouter. This is crap, so
 	# we override what cpuinfo gives us using the device tree as a hint.
 	case "$of_machine" in
-	"n821"*)
+	"cisco,vedge1000"*)
 		return 0
 	esac
 

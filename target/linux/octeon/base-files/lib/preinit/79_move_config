@@ -36,7 +36,7 @@ octeon_move_config() {
 		ubnt,edgerouter-6p)
 			move_config "/dev/mmcblk0p1" "vfat"
 			;;
-		n821)
+		cisco,vedge1000)
 			# Copy from the internal USB disk's first partition.
 			# It is resolved from the device path to not be dependent on which
 			# /dev/sd? path it is at, nor which UUID it happens to have.
