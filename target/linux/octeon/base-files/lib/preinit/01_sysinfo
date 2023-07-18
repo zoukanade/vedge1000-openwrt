@@ -6,7 +6,7 @@ do_sysinfo_octeon() {
 	of_machine=$(head -n1 /sys/firmware/devicetree/base/compatible)
 
 	# Sadly for whatever reason the N821 (Cisco Viptela vEdge 1000) uses the
-	# same supposedly unique board ID as the EdgeRouter. This is crap, so
+	# same supposedly unique board ID as the EdgeRouter. This is bad, so
 	# we override what cpuinfo gives us using the device tree as a hint.
 	case "$of_machine" in
 	"cisco,vedge1000"*)
