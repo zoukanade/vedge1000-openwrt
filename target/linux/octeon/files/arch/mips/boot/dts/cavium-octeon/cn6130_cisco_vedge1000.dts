@@ -14,6 +14,10 @@
 	interrupt-parent = <&ciu>;
 
 	soc@0 {
+		gpio: gpio-controller@1070000000800 {
+			interrupts = <0x00 0x10>;
+		};
+
 		smi0: mdio@1180000001800 {
 			mgmtphy: ethernet-phy@0 {
 				reg = <0x00>;
