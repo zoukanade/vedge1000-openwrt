@@ -53,7 +53,7 @@
                               <0x11800 0xe0002000 0x00 0x08>;
                         cell-index = <0x00>;
                         interrupts = <0x00 0x3e 0x01 0x2e>;
-                        nvmem-cells = <&macaddr_eeprom>;
+                        nvmem-cells = <&macaddr_eeprom 0>;
                         nvmem-cell-names = "mac-address";
                         phy-handle = <&mgmtphy>;
                 };
@@ -73,9 +73,8 @@
                                 ethernet@0 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x00>;
-                                        nvmem-cells = <&macaddr_eeprom>;
+                                        nvmem-cells = <&macaddr_eeprom 3>;
                                         nvmem-cell-names = "mac-address";
-                                        mac-address-increment = <(3)>;
                                         label = "lan2";
                                         phy-handle = <&ge0_2_phy>;
                                 };
@@ -83,9 +82,8 @@
                                 ethernet@1 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x01>;
-                                        nvmem-cells = <&macaddr_eeprom>;
+                                        nvmem-cells = <&macaddr_eeprom 4>;
                                         nvmem-cell-names = "mac-address";
-                                        mac-address-increment = <(4)>;
                                         label = "lan3";
                                         phy-handle = <&ge0_3_phy>;
                                 };
@@ -93,9 +91,8 @@
                                 ethernet@2 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x02>;
-                                        nvmem-cells = <&macaddr_eeprom>;
+                                        nvmem-cells = <&macaddr_eeprom 1>;
                                         nvmem-cell-names = "mac-address";
-                                        mac-address-increment = <(1)>;
                                         label = "lan0";
                                         cavium,sgmii-mac-1000x-mode;
                                 };
@@ -103,9 +100,8 @@
                                 ethernet@3 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x03>;
-                                        nvmem-cells = <&macaddr_eeprom>;
+                                        nvmem-cells = <&macaddr_eeprom 2>;
                                         nvmem-cell-names = "mac-address";
-                                        mac-address-increment = <(2)>;
                                         label = "lan1";
                                         cavium,sgmii-mac-1000x-mode;
                                 };
@@ -120,9 +116,8 @@
                                 ethernet@0 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x00>;
-                                        nvmem-cells = <&macaddr_eeprom>;
+                                        nvmem-cells = <&macaddr_eeprom 7>;
                                         nvmem-cell-names = "mac-address";
-                                        mac-address-increment = <(7)>;
                                         label = "lan6";
                                         phy-handle = <&ge0_6_phy>;
                                 };
@@ -130,9 +125,8 @@
                                 ethernet@1 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x01>;
-                                        nvmem-cells = <&macaddr_eeprom>;
+                                        nvmem-cells = <&macaddr_eeprom 8>;
                                         nvmem-cell-names = "mac-address";
-                                        mac-address-increment = <(8)>;
                                         label = "lan7";
                                         phy-handle = <&ge0_7_phy>;
                                 };
@@ -140,9 +134,8 @@
                                 ethernet@2 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x02>;
-                                        nvmem-cells = <&macaddr_eeprom>;
+                                        nvmem-cells = <&macaddr_eeprom 5>;
                                         nvmem-cell-names = "mac-address";
-                                        mac-address-increment = <(5)>;
                                         label = "lan4";
                                         phy-handle = <&ge0_4_phy>;
                                 };
@@ -150,9 +143,8 @@
                                 ethernet@3 {
                                         compatible = "cavium,octeon-3860-pip-port";
                                         reg = <0x03>;
-                                        nvmem-cells = <&macaddr_eeprom>;
+                                        nvmem-cells = <&macaddr_eeprom 6>;
                                         nvmem-cell-names = "mac-address";
-                                        mac-address-increment = <(6)>;
                                         label = "lan5";
                                         phy-handle = <&ge0_5_phy>;
                                 };
@@ -195,11 +187,17 @@
                                 compatible = "atmel,24c512";
                                 reg = <0x54>;
                                 pagesize = <0x80>;
-                                #address-cells = <1>;
-                                #size-cells = <1>;
 
-                                macaddr_eeprom: mac-address@8 {
-                                        reg = <0x8 6>;
+                                nvmem-layout {
+                                        compatible = "fixed-layout";
+                                        #address-cells = <1>;
+                                        #size-cells = <1>;
+
+                                        macaddr_eeprom: mac-address@8 {
+                                                compatible = "mac-base";
+                                                reg = <0x8 6>;
+                                                #nvmem-cell-cells = <1>;
+                                        };
                                 };
                         };
                 };
