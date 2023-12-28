@@ -357,7 +357,6 @@ CONFIG_ZSTD_OPTIMIZE_O3=y
 # CONFIG_LLDPD_WITH_SONMP is not set
 # CONFIG_OPENVPN_mbedtls_ENABLE_SMALL is not set
 # CONFIG_PACKAGE_kmod-crypto-kpp is not set
-CONFIG_PACKAGE_kmod-lib-crc-ccitt=y
 # CONFIG_PACKAGE_kmod-mppe is not set
 CONFIG_PACKAGE_kmod-ppp=y
 # CONFIG_PACKAGE_kmod-ppp-synctty is not set
