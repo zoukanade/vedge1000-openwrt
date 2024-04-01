@@ -4,7 +4,7 @@
 #include <dt-bindings/input/input.h>
 #include <dt-bindings/interrupt-controller/irq.h>
 
-/include/ "octeon_3xxx.dtsi"
+#include "cn6130_cisco_vedge1000.dtsi"
 
 / {
 	compatible = "cisco,vedge1000", "cavium,cn6130";
@@ -64,62 +64,50 @@
 				};
 
 				ethernet@3 {
-					compatible = "cavium,octeon-3860-pip-port";
-					reg = <0x3>;
 					nvmem-cells = <&macaddr_eeprom 2>;
 					nvmem-cell-names = "mac-address";
 					label = "lan1";
+                                        /delete-property/ local-mac-address;
                                         cavium,sgmii-mac-1000x-mode;
 				};
 			};
 
 			interface@1 {
 				ethernet@0 {
-					compatible = "cavium,octeon-3860-pip-port";
 					reg = <0x0>;
 					nvmem-cells = <&macaddr_eeprom 7>;
 					nvmem-cell-names = "mac-address";
 					label = "lan6";
-#ifndef PHYLINK_SFP
-					phy-handle = <&ge0_6_phy>;
-					phy-connection-type = "sgmii";
-#endif
+                                        /delete-property/ local-mac-address;
+                                        cavium,sgmii-mac-1000x-mode;
 				};
 
 				ethernet@1 {
-					compatible = "cavium,octeon-3860-pip-port";
+
 					reg = <0x1>;
 					nvmem-cells = <&macaddr_eeprom 8>;
 					nvmem-cell-names = "mac-address";
 					label = "lan7";
-#ifndef PHYLINK_SFP
-					phy-handle = <&ge0_7_phy>;
-					phy-connection-type = "sgmii";
-#endif
+                                        /delete-property/ local-mac-address;
+                                        cavium,sgmii-mac-1000x-mode;
 				};
 
 				ethernet@2 {
-					compatible = "cavium,octeon-3860-pip-port";
 					reg = <0x2>;
 					nvmem-cells = <&macaddr_eeprom 5>;
 					nvmem-cell-names = "mac-address";
 					label = "lan4";
-#ifndef PHYLINK_SFP
-					phy-handle = <&ge0_4_phy>;
-					phy-connection-type = "sgmii";
-#endif
+                                        /delete-property/ local-mac-address;
+                                        cavium,sgmii-mac-1000x-mode;
 				};
 
 				ethernet@3 {
-					compatible = "cavium,octeon-3860-pip-port";
 					reg = <0x3>;
 					nvmem-cells = <&macaddr_eeprom 6>;
 					nvmem-cell-names = "mac-address";
 					label = "lan5";
-#ifndef PHYLINK_SFP
-					phy-handle = <&ge0_5_phy>;
-					phy-connection-type = "sgmii";
-#endif
+                                        /delete-property/ local-mac-address;
+                                        cavium,sgmii-mac-1000x-mode;
 				};
 			};
 		};
@@ -345,6 +333,18 @@
                                         label = "green:activity-flash";
                                         default-state = "off";
                                 };
+                                led-offset0x12-mask0x4{
+                                        compatible = "register-bit-led";
+                                        offset = <0x12>;
+                                        mask = <0x4>;
+                                        label = "led-offset0x12-mask0x4";
+                                };
+                                led-offset0x12-mask0x8{
+                                        compatible = "register-bit-led";
+                                        offset = <0x12>;
+                                        mask = <0x8>;
+                                        label = "led-offset0x12-mask0x8";
+                                };
                                 statusled {
                                         compatible = "register-bit-led";
                                         offset = <0x12>;
@@ -352,11 +352,18 @@
                                         label = "green:status";
                                         default-state = "on";
                                 };
+
                                 lan0-linkled {
                                         compatible = "register-bit-led";
                                         offset = <0x17>;
                                         mask = <0x1>;
                                         label = "lan0:green:status";
+                                };
+                                lan0-flash {
+                                        compatible = "register-bit-led";
+                                        offset = <0x17>;
+                                        mask = <0x2>;
+                                        label = "lan0:flash";
                                 };
                                 lan0-actled {
                                         compatible = "register-bit-led";
@@ -364,11 +371,23 @@
                                         mask = <0x4>;
                                         label = "lan0:green:activity";
                                 };
+                                lan0-yellow {
+                                        compatible = "register-bit-led";
+                                        offset = <0x17>;
+                                        mask = <0x8>;
+                                        label = "lan0:yellow";
+                                };
                                 lan1-linkled {
                                         compatible = "register-bit-led";
                                         offset = <0x17>;
                                         mask = <0x10>;
                                         label = "lan1:green:status";
+                                };
+                                lan1-flash-led {
+                                        compatible = "register-bit-led";
+                                        offset = <0x17>;
+                                        mask = <0x20>;
+                                        label = "lan1:flash";
                                 };
                                 lan1-actled {
                                         compatible = "register-bit-led";
@@ -376,11 +395,23 @@
                                         mask = <0x40>;
                                         label = "lan1:green:activity";
                                 };
+                                lan1-yellow{
+                                        compatible = "register-bit-led";
+                                        offset = <0x17>;
+                                        mask = <0x80>;
+                                        label = "lan1:yellow";
+                                };
                                 lan2-linkled {
                                         compatible = "register-bit-led";
                                         offset = <0x16>;
                                         mask = <0x1>;
                                         label = "lan2:green:status";
+                                };
+                                lan2-flash {
+                                        compatible = "register-bit-led";
+                                        offset = <0x16>;
+                                        mask = <0x2>;
+                                        label = "lan2:flash";
                                 };
                                 lan2-actled {
                                         compatible = "register-bit-led";
@@ -388,11 +419,23 @@
                                         mask = <0x4>;
                                         label = "lan2:green:activity";
                                 };
+                                lan2-yellow {
+                                        compatible = "register-bit-led";
+                                        offset = <0x16>;
+                                        mask = <0x8>;
+                                        label = "lan2:yellow";
+                                };
                                 lan3-linkled {
                                         compatible = "register-bit-led";
                                         offset = <0x16>;
                                         mask = <0x10>;
                                         label = "lan3:green:status";
+                                };
+                                lan3-flash {
+                                        compatible = "register-bit-led";
+                                        offset = <0x16>;
+                                        mask = <0x20>;
+                                        label = "lan3:flash";
                                 };
                                 lan3-actled {
                                         compatible = "register-bit-led";
@@ -400,11 +443,23 @@
                                         mask = <0x40>;
                                         label = "lan3:green:activity";
                                 };
+                                lan3-yellow {
+                                        compatible = "register-bit-led";
+                                        offset = <0x16>;
+                                        mask = <0x80>;
+                                        label = "lan3:yellow";
+                                };
                                 lan4-linkled {
                                         compatible = "register-bit-led";
                                         offset = <0x15>;
                                         mask = <0x1>;
                                         label = "lan4:green:status";
+                                };
+                                lan4-flash {
+                                        compatible = "register-bit-led";
+                                        offset = <0x15>;
+                                        mask = <0x2>;
+                                        label = "lan4:flash";
                                 };
                                 lan4-actled {
                                         compatible = "register-bit-led";
@@ -412,11 +467,23 @@
                                         mask = <0x4>;
                                         label = "lan4:green:activity";
                                 };
+                                lan4-yellow {
+                                        compatible = "register-bit-led";
+                                        offset = <0x15>;
+                                        mask = <0x8>;
+                                        label = "lan4:yellow";
+                                };
                                 lan5-linkled {
                                         compatible = "register-bit-led";
                                         offset = <0x15>;
                                         mask = <0x10>;
                                         label = "lan5:green:status";
+                                };
+                                lan5-flash {
+                                        compatible = "register-bit-led";
+                                        offset = <0x15>;
+                                        mask = <0x20>;
+                                        label = "lan5:flash";
                                 };
                                 lan5-actled {
                                         compatible = "register-bit-led";
@@ -424,11 +491,23 @@
                                         mask = <0x40>;
                                         label = "lan5:green:activity";
                                 };
+                                lan5-yellow {
+                                        compatible = "register-bit-led";
+                                        offset = <0x15>;
+                                        mask = <0x80>;
+                                        label = "lan5:yellow";
+                                };
                                 lan6-linkled {
                                         compatible = "register-bit-led";
                                         offset = <0x14>;
                                         mask = <0x1>;
                                         label = "lan6:green:status";
+                                };
+                                lan6-flash {
+                                        compatible = "register-bit-led";
+                                        offset = <0x14>;
+                                        mask = <0x2>;
+                                        label = "lan6:flash";
                                 };
                                 lan6-actled {
                                         compatible = "register-bit-led";
@@ -436,17 +515,35 @@
                                         mask = <0x4>;
                                         label = "lan6:green:activity";
                                 };
+                                lan6-yellow {
+                                        compatible = "register-bit-led";
+                                        offset = <0x14>;
+                                        mask = <0x8>;
+                                        label = "lan6:yellow";
+                                };
                                 lan7-linkled {
                                         compatible = "register-bit-led";
                                         offset = <0x14>;
                                         mask = <0x10>;
                                         label = "lan7:green:status";
                                 };
+                                lan7-flash {
+                                        compatible = "register-bit-led";
+                                        offset = <0x14>;
+                                        mask = <0x20>;
+                                        label = "lan7:flash";
+                                };
                                 lan7-actled {
                                         compatible = "register-bit-led";
                                         offset = <0x14>;
                                         mask = <0x40>;
                                         label = "lan7:green:activity";
+                                };
+                                lan7-yellow {
+                                        compatible = "register-bit-led";
+                                        offset = <0x14>;
+                                        mask = <0x80>;
+                                        label = "lan7:yellow";
                                 };
 
                                 i2cmux0: i2c-mux@1f {
